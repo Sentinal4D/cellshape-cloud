@@ -4,4 +4,3 @@ Cellshape-cloud is an easy-to-use tool to analyse the shapes of cells using deep
 
 <img src="https://github.com/adamltyson/cellshape-cloud/blob/mrdv_mvp/img/cellshape.png" align="right"
      alt="Cellshape logo by Matt De Vries" width="180" height="178">
->>>>>>> 5c2108fa0e71134fbeffe1d877f44e4fc04db924
