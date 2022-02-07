@@ -3,7 +3,7 @@ import torch.nn as nn
 import itertools
 from ..utils.graph_functions import get_graph_feature
 from ..utils.helper_modules import Flatten
-from .chamfer_loss import ChamferLoss
+from losses.chamfer_loss import ChamferLoss
 import numpy as np
 
 
