@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 from pyntcloud import PyntCloud
-import glob
+from pathlib import Path
 
 
 class PointCloudDataset(Dataset):
@@ -10,10 +10,11 @@ class PointCloudDataset(Dataset):
                  normalise=True):
         self.img_dir = img_dir
         self.normalise = normalise
-        self.files = glob.glob('*.ply')
+        self.p = Path(self.img_dir)
+        self.files = list(self.p.glob('*.ply'))
 
     def __len__(self):
-        return len(self.new_df)
+        return len(self.files)
 
     def __getitem__(self, idx):
         # read the image

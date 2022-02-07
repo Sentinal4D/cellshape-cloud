@@ -1,14 +1,11 @@
 import torch
 
-from dataset import *
-from model import *
+from dataloaders.pointcloud_dataset import *
 import argparse
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 import datetime
 from naming_and_reports import *
-from datetime import date, time
-from utils import *
 from chamfer import *
 
 
@@ -44,20 +41,17 @@ if __name__ == '__main__':
     train_all = args.train_on_all
     cell_component = args.component
 
-    model_name = 'FoldingNetNew_{}feats_{}shape_{}decoder_trainall{}'.format(num_features,
-                                                                             shape,
-                                                                             decoder,
-                                                                             train_all)
+    model_name = f'FoldingNetNew_{num_features}feats_{shape}shape_{decoder}decoder_trainall{train_all}'
     f, name_net, saved_to, name_txt, name = reports(model_name, output_dir)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    to_eval = "ReconstructionNet" + "(" + "'{0}'".format(decoder) + ", num_clusters=5, " \
+    to_eval = "ReconstructionNet" + "(" + f"'{decoder}'" + ", num_clusters=5, " \
                                                                         "num_features=num_features, " \
                                                                         "shape=shape)"
     model = eval(to_eval)
     model = model.to(device)
 
-    print_both(f, 'Number of trainable parameters: {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
+    print_both(f, f'Number of trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}')
 
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=learning_rate * 16 / batch_size,

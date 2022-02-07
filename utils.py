@@ -1,10 +1,7 @@
 import io
-import matplotlib.pyplot as plt
-import plotly.express as px
-import pandas as pd
 import PIL
 import torchvision
-from skimage.io import imread
+import matplotlib.pyplot as plt
 
 
 def plot_to_image(fig):
@@ -25,15 +22,6 @@ def plot_to_image(fig):
 
 
 def plot_point_cloud(points):
-    # data = pd.DataFrame(points, columns=['x', 'y', 'z'])
-    # fig = px.scatter_3d(data, x="x", y="y", z='z',
-    #                     labels=dict(x="x", y="y", z="z"))
-    # fig.update_traces(marker=dict(size=2),
-    #                   selector=dict(mode='markers'))
-    # fig.update_layout(width=600,
-    #                   height=600)
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
 
     fig = plt.figure(figsize=(5, 5))
     ax = plt.axes(projection='3d')
