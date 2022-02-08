@@ -1,4 +1,4 @@
-
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <img src="https://github.com/DeVriesMatt/cellshape-cloud/blob/main/img/cellshape_cloud.png" 
      alt="Cellshape logo by Matt De Vries">
 ___
