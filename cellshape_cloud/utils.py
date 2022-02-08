@@ -11,7 +11,7 @@ def plot_to_image(fig):
     buf = io.BytesIO()
     # image_bites = fig.to_image(format="png")
     # print(image_bites)
-    fig.savefig(buf, format='jpeg')
+    fig.savefig(buf, format="jpeg")
     buf.seek(0)
     # Turn plot into tensor to save on tensorboard
     # buf.seek(0)
@@ -24,8 +24,7 @@ def plot_to_image(fig):
 def plot_point_cloud(points):
 
     fig = plt.figure(figsize=(5, 5))
-    ax = plt.axes(projection='3d')
+    ax = plt.axes(projection="3d")
 
-    ax.scatter(points[:, 0], points[:, 1], points[:, 2], marker='o', s=10)
+    ax.scatter(points[:, 0], points[:, 1], points[:, 2], marker="o", s=10)
     return fig
-

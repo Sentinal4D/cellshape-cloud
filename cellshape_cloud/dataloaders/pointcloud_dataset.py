@@ -5,13 +5,11 @@ from pathlib import Path
 
 
 class PointCloudDataset(Dataset):
-    def __init__(self,
-                 img_dir,
-                 normalise=True):
+    def __init__(self, img_dir, normalise=True):
         self.img_dir = img_dir
         self.normalise = normalise
         self.p = Path(self.img_dir)
-        self.files = list(self.p.glob('*.ply'))
+        self.files = list(self.p.glob("*.ply"))
 
     def __len__(self):
         return len(self.files)

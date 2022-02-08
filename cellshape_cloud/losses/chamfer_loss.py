@@ -9,7 +9,7 @@ def batch_pairwise_dist(x, y):
     zz = torch.bmm(x, y.transpose(2, 1))
     rx = xx.unsqueeze(1).expand_as(zz.transpose(2, 1))
     ry = yy.unsqueeze(1).expand_as(zz)
-    P = (rx.transpose(2, 1) + ry - 2 * zz)
+    P = rx.transpose(2, 1) + ry - 2 * zz
     return P
 
 

@@ -10,7 +10,7 @@ def train(model, dataloader, num_epochs, optimizer, save_to):
 
     for epoch in range(num_epochs):
         batch_num = 1
-        running_loss = 0.
+        running_loss = 0.0
         model.train()
         for i, data in enumerate(dataloader, 0):
             inputs, labels, _ = data
@@ -19,7 +19,9 @@ def train(model, dataloader, num_epochs, optimizer, save_to):
 
             # ===================forward=====================
             with torch.set_grad_enabled(True):
-                output, feature, embedding, clustering_out, fold1 = model(inputs)
+                output, feature, embedding, clustering_out, fold1 = model(
+                    inputs
+                )
                 optimizer.zero_grad()
                 loss = model.get_loss(inputs, output)
                 # ===================backward====================
@@ -31,9 +33,11 @@ def train(model, dataloader, num_epochs, optimizer, save_to):
 
         total_loss = running_loss / len(dataloader)
         if total_loss < best_loss:
-            checkpoint = {'model_state_dict': model.state_dict(),
-                          'optimizer_state_dict': optimizer.state_dict(),
-                          'epoch': epoch,
-                          'loss': total_loss}
+            checkpoint = {
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "epoch": epoch,
+                "loss": total_loss,
+            }
             best_loss = total_loss
-            torch.save(checkpoint, save_to + '.pt')
+            torch.save(checkpoint, save_to + ".pt")
