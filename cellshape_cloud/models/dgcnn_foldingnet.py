@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import itertools
-import numpy as np
 
 from ..utils.graph_functions import get_graph_feature
 from ..utils.helper_modules import Flatten
@@ -60,57 +58,27 @@ class DGCNNEncoder(nn.Module):
         x = x.transpose(2, 1)
 
         batch_size = x.size(0)
-        x = get_graph_feature(
-            x, k=self.k
-        )  # (batch_size, 3, num_points) -> (batch_size, 3*2, num_points, k)
-        x = self.conv1(
-            x
-        )  # (batch_size, 3*2, num_points, k) -> (batch_size, 64, num_points, k)
-        x1 = x.max(dim=-1, keepdim=False)[
-            0
-        ]  # (batch_size, 64, num_points, k) -> (batch_size, 64, num_points)
+        x = get_graph_feature(x, k=self.k)
+        x = self.conv1(x)
+        x1 = x.max(dim=-1, keepdim=False)[0]
 
-        x = get_graph_feature(
-            x1, k=self.k
-        )  # (batch_size, 64, num_points) -> (batch_size, 64*2, num_points, k)
-        x = self.conv2(
-            x
-        )  # (batch_size, 64*2, num_points, k) -> (batch_size, 64, num_points, k)
-        x2 = x.max(dim=-1, keepdim=False)[
-            0
-        ]  # (batch_size, 64, num_points, k) -> (batch_size, 64, num_points)
+        x = get_graph_feature(x1, k=self.k)
+        x = self.conv2(x)
+        x2 = x.max(dim=-1, keepdim=False)[0]
 
-        x = get_graph_feature(
-            x2, k=self.k
-        )  # (batch_size, 64, num_points) -> (batch_size, 64*2, num_points, k)
-        x = self.conv3(
-            x
-        )  # (batch_size, 64*2, num_points, k) -> (batch_size, 128, num_points, k)
-        x3 = x.max(dim=-1, keepdim=False)[
-            0
-        ]  # (batch_size, 128, num_points, k) -> (batch_size, 128, num_points)
+        x = get_graph_feature(x2, k=self.k)
+        x = self.conv3(x)
+        x3 = x.max(dim=-1, keepdim=False)[0]
 
-        x = get_graph_feature(
-            x3, k=self.k
-        )  # (batch_size, 128, num_points) -> (batch_size, 128*2, num_points, k)
-        x = self.conv4(
-            x
-        )  # (batch_size, 128*2, num_points, k) -> (batch_size, 256, num_points, k)
-        x4 = x.max(dim=-1, keepdim=False)[
-            0
-        ]  # (batch_size, 256, num_points, k) -> (batch_size, 256, num_points)
+        x = get_graph_feature(x3, k=self.k)
+        x = self.conv4(x)
+        x4 = x.max(dim=-1, keepdim=False)[0]
 
-        x = torch.cat((x1, x2, x3, x4), dim=1)  # (batch_size, 512, num_points)
+        x = torch.cat((x1, x2, x3, x4), dim=1)
 
-        x0 = self.conv5(
-            x
-        )  # (batch_size, 512, num_points) -> (batch_size, feat_dims, num_points)
-        x = x0.max(dim=-1, keepdim=False)[
-            0
-        ]  # (batch_size, feat_dims, num_points) -> (batch_size, feat_dims)
-        feat = x.unsqueeze(
-            1
-        )  # (batch_size, feat_dims) -> (batch_size, 1, feat_dims)
+        x0 = self.conv5(x)
+        x = x0.max(dim=-1, keepdim=False)[0]
+        feat = x.unsqueeze(1)
 
         if (
             self.num_features < self.lin_features_len
@@ -121,7 +89,7 @@ class DGCNNEncoder(nn.Module):
         else:
             embedding = torch.reshape(torch.squeeze(feat), (batch_size, 512))
 
-        return feat, embedding  # (batch_size, 1, feat_dims)
+        return feat, embedding
 
 
 class DGCNNFoldingNet(nn.Module):

@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 
 def plot_to_image(fig):
     """Converts the matplotlib plot specified by 'figure' to a PNG image and
-    returns it. The supplied figure is closed and inaccessible after this call."""
+    returns it. The supplied figure is closed and inaccessible after
+    this call."""
     # Save the plot to a PNG in memory.
     buf = io.BytesIO()
     # image_bites = fig.to_image(format="png")

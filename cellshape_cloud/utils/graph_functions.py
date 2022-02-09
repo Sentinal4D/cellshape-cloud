@@ -27,27 +27,19 @@ def knn(x, k):
 def local_cov(pts, idx):
     batch_size = pts.size(0)
     num_points = pts.size(2)
-    pts = pts.view(batch_size, -1, num_points)  # (batch_size, 3, num_points)
+    pts = pts.view(batch_size, -1, num_points)
 
     _, num_dims, _ = pts.size()
 
-    x = pts.transpose(2, 1).contiguous()  # (batch_size, num_points, 3)
-    x = x.view(batch_size * num_points, -1)[
-        idx, :
-    ]  # (batch_size*num_points*2, 3)
-    x = x.view(
-        batch_size, num_points, -1, num_dims
-    )  # (batch_size, num_points, k, 3)
+    x = pts.transpose(2, 1).contiguous()
+    x = x.view(batch_size * num_points, -1)[idx, :]
+    x = x.view(batch_size, num_points, -1, num_dims)
 
-    x = torch.matmul(
-        x[:, :, 0].unsqueeze(3), x[:, :, 1].unsqueeze(2)
-    )  # (batch_size, num_points, 3, 1) * (batch_size, num_points, 1, 3) -> (batch_size, num_points, 3, 3)
-    # x = torch.matmul(x[:,:,1:].transpose(3, 2), x[:,:,1:])
-    x = x.view(batch_size, num_points, 9).transpose(
-        2, 1
-    )  # (batch_size, 9, num_points)
+    x = torch.matmul(x[:, :, 0].unsqueeze(3), x[:, :, 1].unsqueeze(2))
 
-    x = torch.cat((pts, x), dim=1)  # (batch_size, 12, num_points)
+    x = x.view(batch_size, num_points, 9).transpose(2, 1)
+
+    x = torch.cat((pts, x), dim=1)
 
     return x
 
@@ -59,14 +51,10 @@ def local_maxpool(x, idx):
 
     _, num_dims, _ = x.size()
 
-    x = x.transpose(2, 1).contiguous()  # (batch_size, num_points, num_dims)
-    x = x.view(batch_size * num_points, -1)[
-        idx, :
-    ]  # (batch_size*n, num_dims) -> (batch_size*n*k, num_dims)
-    x = x.view(
-        batch_size, num_points, -1, num_dims
-    )  # (batch_size, num_points, k, num_dims)
-    x, _ = torch.max(x, dim=2)  # (batch_size, num_points, num_dims)
+    x = x.transpose(2, 1).contiguous()
+    x = x.view(batch_size * num_points, -1)[idx, :]
+    x = x.view(batch_size, num_points, -1, num_dims)
+    x, _ = torch.max(x, dim=2)
 
     return x
 
@@ -74,27 +62,17 @@ def local_maxpool(x, idx):
 def get_graph_feature(x, k=20, idx=None):
     batch_size = x.size(0)
     num_points = x.size(2)
-    x = x.view(
-        batch_size, -1, num_points
-    )  # (batch_size, num_dims, num_points)
+    x = x.view(batch_size, -1, num_points)
     if idx is None:
-        idx = knn(x, k=k)  # (batch_size, num_points, k)
+        idx = knn(x, k=k)
 
     _, num_dims, _ = x.size()
 
-    x = x.transpose(2, 1).contiguous()  # (batch_size, num_points, num_dims)
-    feature = x.view(batch_size * num_points, -1)[
-        idx, :
-    ]  # (batch_size*n, num_dims) -> (batch_size*n*k, num_dims)
-    feature = feature.view(
-        batch_size, num_points, k, num_dims
-    )  # (batch_size, num_points, k, num_dims)
-    x = x.view(batch_size, num_points, 1, num_dims).repeat(
-        1, 1, k, 1
-    )  # (batch_size, num_points, k, num_dims)
+    x = x.transpose(2, 1).contiguous()
+    feature = x.view(batch_size * num_points, -1)[idx, :]
+    feature = feature.view(batch_size, num_points, k, num_dims)
+    x = x.view(batch_size, num_points, 1, num_dims).repeat(1, 1, k, 1)
 
-    feature = torch.cat((feature - x, x), dim=3).permute(
-        0, 3, 1, 2
-    )  # (batch_size, num_points, k, 2*num_dims) -> (batch_size, 2*num_dims, num_points, k)
+    feature = torch.cat((feature - x, x), dim=3).permute(0, 3, 1, 2)
 
-    return feature  # (batch_size, 2*num_dims, num_points, k)
+    return feature
