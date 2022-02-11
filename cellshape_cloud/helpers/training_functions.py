@@ -23,9 +23,7 @@ def train(model, dataloader, num_epochs, optimizer, save_to):
 
                 # ===================forward=====================
                 with torch.set_grad_enabled(True):
-                    output, feature, embedding, fold1 = model(
-                        inputs
-                    )
+                    output, feature, embedding, fold1 = model(inputs)
                     optimizer.zero_grad()
                     loss = model.get_loss(inputs, output)
                     # ===================backward====================

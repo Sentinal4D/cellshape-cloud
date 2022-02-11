@@ -79,7 +79,7 @@ class FoldNetDecoder(nn.Module):
             nn.Conv1d(512, 512, 1),
             nn.ReLU(),
             nn.Conv1d(512, 3, 1),
-            )
+        )
 
         self.folding2 = nn.Sequential(
             nn.Conv1d(512 + 3, 512, 1),
@@ -114,9 +114,7 @@ class FoldNetDecoder(nn.Module):
 
         else:
             x = x.unsqueeze(1)
-        x = x.transpose(1, 2).repeat(
-            1, 1, self.m
-        )
+        x = x.transpose(1, 2).repeat(1, 1, self.m)
         points = self.build_grid(x.shape[0]).transpose(1, 2)
         if x.get_device() != -1:
             points = points.cuda(x.get_device())

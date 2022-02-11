@@ -1,10 +1,6 @@
 import torch
 import torch.nn as nn
 
-import sys
-sys.path.append('../')
-
-
 from ..helpers.graph_functions import get_graph_feature
 from ..helpers.helper_modules import Flatten
 from ..losses.chamfer_loss import ChamferLoss
