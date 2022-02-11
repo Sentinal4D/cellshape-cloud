@@ -1,8 +1,12 @@
 import torch
 import torch.nn as nn
 
-from ..utils.graph_functions import get_graph_feature
-from ..utils.helper_modules import Flatten
+import sys
+sys.path.append('../')
+
+
+from ..helpers.graph_functions import get_graph_feature
+from ..helpers.helper_modules import Flatten
 from ..losses.chamfer_loss import ChamferLoss
 from .foldingnet import FoldNetDecoder
 
@@ -12,35 +16,30 @@ class DGCNNEncoder(nn.Module):
         super(DGCNNEncoder, self).__init__()
         self.k = 20
         self.num_features = num_features
-        self.bn1 = nn.BatchNorm2d(64)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.bn3 = nn.BatchNorm2d(128)
-        self.bn4 = nn.BatchNorm2d(256)
-        self.bn5 = nn.BatchNorm1d(512)
 
         self.conv1 = nn.Sequential(
             nn.Conv2d(3 * 2, 64, kernel_size=1, bias=False),
-            self.bn1,
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2),
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(64 * 2, 64, kernel_size=1, bias=False),
-            self.bn2,
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2),
         )
         self.conv3 = nn.Sequential(
             nn.Conv2d(64 * 2, 128, kernel_size=1, bias=False),
-            self.bn3,
+            nn.BatchNorm2d(128),
             nn.LeakyReLU(negative_slope=0.2),
         )
         self.conv4 = nn.Sequential(
             nn.Conv2d(128 * 2, 256, kernel_size=1, bias=False),
-            self.bn4,
+            nn.BatchNorm2d(256),
             nn.LeakyReLU(negative_slope=0.2),
         )
         self.conv5 = nn.Sequential(
             nn.Conv1d(512, 512, kernel_size=1, bias=False),
-            self.bn5,
+            nn.BatchNorm1d(512),
             nn.LeakyReLU(negative_slope=0.2),
         )
 
@@ -101,9 +100,9 @@ class DGCNNFoldingNet(nn.Module):
         self.loss = ChamferLoss()
 
     def forward(self, input):
-        feature, embedding, clustering_out = self.encoder(input)
+        feature, embedding = self.encoder(input)
         output, fold1 = self.decoder(embedding)
-        return output, feature, embedding, clustering_out, fold1
+        return output, feature, embedding, fold1
 
     def get_parameter(self):
         return list(self.encoder.parameters()) + list(
