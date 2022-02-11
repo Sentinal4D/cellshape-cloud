@@ -9,7 +9,7 @@ def knn(x, k):
     xx = torch.sum(x**2, dim=1, keepdim=True)
     pairwise_distance = -xx - inner - xx.transpose(2, 1)
 
-    idx = pairwise_distance.topk(k=k, dim=-1)[1]  # (batch_size, num_points, k)
+    idx = pairwise_distance.topk(k=k, dim=-1)[1]
 
     if idx.get_device() == -1:
         idx_base = torch.arange(0, batch_size).view(-1, 1, 1) * num_points
