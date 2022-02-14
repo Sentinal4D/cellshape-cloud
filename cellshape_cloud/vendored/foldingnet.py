@@ -13,7 +13,11 @@ import numpy as np
 import itertools
 from chamferdist import ChamferDistance
 
-from cellshape_cloud.vendored.graph_functions import local_maxpool, knn, local_cov
+from cellshape_cloud.vendored.graph_functions import (
+    local_maxpool,
+    knn,
+    local_cov,
+)
 
 
 class FoldNetEncoder(nn.Module):
