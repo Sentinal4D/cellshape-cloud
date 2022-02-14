@@ -2,7 +2,6 @@
 Vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
-@File: model.py
 @Time: 2020/3/23 5:39 PM
 @License: cellshape_cloud/vendored/models/LICENSE
 """
@@ -11,7 +10,7 @@ import torch
 import torch.nn as nn
 from chamferdist import ChamferDistance
 
-from cellshape_cloud.helpers.graph_functions import get_graph_feature
+from cellshape_cloud.vendored.graph_functions import get_graph_feature
 from cellshape_cloud.helpers.helper_modules import Flatten
 from .foldingnet import FoldNetDecoder
 

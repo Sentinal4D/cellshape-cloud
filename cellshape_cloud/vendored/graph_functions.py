@@ -1,3 +1,11 @@
+"""
+Vendored and adapted from:
+@Author: An Tao
+@Contact: ta19@mails.tsinghua.edu.cn
+@Time: 2020/3/23 5:39 PM
+@License: cellshape_cloud/vendored/models/LICENSE
+"""
+
 import torch
 
 

@@ -2,7 +2,6 @@
 Vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
-@File: model.py
 @Time: 2020/3/23 5:39 PM
 @License: cellshape_cloud/vendored/models/LICENSE
 """
@@ -14,7 +13,7 @@ import numpy as np
 import itertools
 from chamferdist import ChamferDistance
 
-from cellshape_cloud.helpers.graph_functions import local_maxpool, knn, local_cov
+from cellshape_cloud.vendored.graph_functions import local_maxpool, knn, local_cov
 
 
 class FoldNetEncoder(nn.Module):
