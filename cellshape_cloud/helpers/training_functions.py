@@ -3,7 +3,6 @@ from tqdm import tqdm
 
 
 def train(model, dataloader, num_epochs, optimizer, save_to):
-    # Logging
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.train()
@@ -23,7 +22,7 @@ def train(model, dataloader, num_epochs, optimizer, save_to):
 
                 # ===================forward=====================
                 with torch.set_grad_enabled(True):
-                    output, feature, embedding, fold1 = model(inputs)
+                    output, features, fold1 = model(inputs)
                     optimizer.zero_grad()
                     loss = model.get_loss(inputs, output)
                     # ===================backward====================
