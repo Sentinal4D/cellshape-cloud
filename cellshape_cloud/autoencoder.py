@@ -1,7 +1,7 @@
 from torch import nn
 
-from vendored.encoders import FoldNetEncoder, DGCNNEncoder
-from vendored.decoders import FoldNetDecoder
+from ._vendor.encoders import FoldNetEncoder, DGCNNEncoder
+from ._vendor.decoders import FoldNetDecoder
 
 
 class GraphAutoEncoder(nn.Module):
@@ -17,9 +17,9 @@ class GraphAutoEncoder(nn.Module):
             self.encoder = FoldNetEncoder(
                 num_features=self.num_features, k=self.k
             )
-        self.decoder = FoldNetDecoder
+        self.decoder = FoldNetDecoder(num_features=self.num_features)
 
     def forward(self, x):
         features = self.encoder(x)
-        output = self.decoder(features)
+        output = self.decoder(x=features)
         return output, features

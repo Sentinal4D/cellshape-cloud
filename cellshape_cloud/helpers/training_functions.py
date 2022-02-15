@@ -24,7 +24,7 @@ def train(model, dataloader, num_epochs, criterion, optimizer, save_to):
                 with torch.set_grad_enabled(True):
                     output, features = model(inputs)
                     optimizer.zero_grad()
-                    loss = criterion(inputs, output)
+                    loss = criterion(inputs, output, reverse=True)
                     # ===================backward====================
                     loss.backward()
                     optimizer.step()

@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from cellshape_cloud.vendored.graph_functions import (
+from cellshape_cloud._vendor.graph_functions import (
     get_graph_feature,
     local_maxpool,
     knn,

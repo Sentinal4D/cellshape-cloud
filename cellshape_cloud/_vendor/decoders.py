@@ -67,5 +67,5 @@ class FoldNetDecoder(nn.Module):
         folding_result1 = self.folding1(cat1)
         cat2 = torch.cat((x, folding_result1), dim=1)
         folding_result2 = self.folding2(cat2)
-        output = folding_result2
+        output = folding_result2.transpose(1, 2)
         return output
