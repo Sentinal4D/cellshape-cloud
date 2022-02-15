@@ -17,8 +17,8 @@ jobs:
           pip install .[dev]
       - name: Lint
         run: |
-#          black ./ --check -l 79
-#          flake8
+          black ./ --check -l 79
+          flake8
   test:
     needs: lint
     runs-on: ${{ matrix.os }}

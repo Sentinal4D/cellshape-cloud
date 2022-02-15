@@ -1,4 +1,13 @@
+[![Python Version](https://img.shields.io/pypi/pyversions/cellshape-cloud.svg)](https://pypi.org/project/cellshape-cloud)
+[![PyPI](https://img.shields.io/pypi/v/cellshape-cloud.svg)](https://pypi.org/project/cellshape-cloud)
+[![Downloads](https://pepy.tech/badge/cellshape-cloud)](https://pepy.tech/project/cellshape-cloud)
+[![Wheel](https://img.shields.io/pypi/wheel/cellshape-cloud.svg)](https://pypi.org/project/cellshape-cloud)
+[![Development Status](https://img.shields.io/pypi/status/cellshape-cloud.svg)](https://github.com/Sentinal4D/cellshape-cloud)
+[![Tests](https://img.shields.io/github/workflow/status/Sentinal4D/cellshape-cloud/tests)](
+    https://github.com/Sentinal4D/cellshape-cloud/actions)
+[![Coverage Status](https://coveralls.io/repos/github/Sentinal4D/cellshape-cloud/badge.svg?branch=master)](https://coveralls.io/github/Sentinal4D/cellshape-cloud?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 <img src="https://github.com/DeVriesMatt/cellshape-cloud/blob/main/img/cellshape_cloud.png" 
      alt="Cellshape logo by Matt De Vries">
 ___
