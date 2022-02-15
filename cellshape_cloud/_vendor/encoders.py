@@ -3,7 +3,7 @@ Vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
 @Time: 2020/3/23 5:39 PM
-@License: cellshape_cloud/vendored/models/LICENSE
+@License: cellshape_cloud/_vendor/models/LICENSE
 """
 
 import torch
@@ -121,7 +121,9 @@ class FoldNetEncoder(nn.Module):
         self.linear2 = nn.Linear(128, 128)
         self.conv2 = nn.Conv1d(128, 1024, 1)
         self.mlp2 = nn.Sequential(
-            nn.Conv1d(1024, 512, 1), nn.ReLU(), nn.Conv1d(512, 512, 1),
+            nn.Conv1d(1024, 512, 1),
+            nn.ReLU(),
+            nn.Conv1d(512, 512, 1),
         )
         self.clustering = None
         self.lin_features_len = 512

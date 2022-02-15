@@ -3,7 +3,7 @@ Vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
 @Time: 2020/3/23 5:39 PM
-@License: cellshape_cloud/vendored/models/LICENSE
+@License: cellshape_cloud/_vendor/models/LICENSE
 """
 
 import torch
@@ -14,7 +14,7 @@ def knn(x, k):
     num_points = x.size(2)
 
     inner = -2 * torch.matmul(x.transpose(2, 1), x)
-    xx = torch.sum(x ** 2, dim=1, keepdim=True)
+    xx = torch.sum(x**2, dim=1, keepdim=True)
     pairwise_distance = -xx - inner - xx.transpose(2, 1)
 
     idx = pairwise_distance.topk(k=k, dim=-1)[1]
