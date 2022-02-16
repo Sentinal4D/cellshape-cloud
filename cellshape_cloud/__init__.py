@@ -7,3 +7,5 @@ from ._vendor.encoders import *
 from ._vendor.graph_functions import *
 from ._vendor.chamfer_distance import *
 from .autoencoder import *
+
+__version__ = "0.0.2-rc0"
