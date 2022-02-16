@@ -5,11 +5,27 @@ from ._vendor.decoders import FoldNetDecoder
 
 
 class GraphAutoEncoder(nn.Module):
-    def __init__(self, num_features, k=20, encoder="dgcnn"):
+    def __init__(
+        self,
+        num_features,
+        k=20,
+        encoder_type="dgcnn",
+        decoder_type="foldingnet",
+    ):
         super(GraphAutoEncoder, self).__init__()
         self.k = k
         self.num_features = num_features
-        if encoder == "dgcnn":
+        assert encoder_type.lower() in [
+            "foldingnet, dgcnn"
+        ], "Please select an encoder type from either foldingnet or dgcnn."
+
+        assert decoder_type.lower() in [
+            "foldingnet, dgcnn"
+        ], "Please select an decoder type from either foldingnet."
+
+        self.encoder_type = encoder_type.lower()
+        self.decoder_type = decoder_type.lower()
+        if self.encoder_type == "dgcnn":
             self.encoder = DGCNNEncoder(
                 num_features=self.num_features, k=self.k
             )

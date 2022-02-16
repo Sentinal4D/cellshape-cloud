@@ -82,3 +82,7 @@ venv/
 # written by setuptools_scm
 **/_version.py
 
+# PyTorch logging directories
+*/runs/
+*/reports/
+*/nets/
