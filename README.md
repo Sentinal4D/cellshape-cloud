@@ -15,12 +15,39 @@ Cellshape-cloud is an easy-to-use tool to analyse the shapes of cells using deep
 
 
 
-### To install
+## To install
 ```bash
 pip install cellshape-cloud
 ```
 
-### For developers
+## Usage
+```python
+import torch
+from cellshape_cloud import CloudAutoEncoder
+
+model = CloudAutoEncoder(num_features=128, 
+                         k=20,
+                         encoder_type='dgcnn',
+                         decoder_type='foldingnet')
+
+points = torch.randn(1, 2048, 3)
+
+recon, features = model(points)
+```
+
+## Parameters
+
+- `num_features`: int.  
+The size of the latent space of the autoencoder. If you have rectangular images, make sure your image size is the maximum of the width and height
+- `k`: int.  
+The number of neightbours to use in the k-nearest-neighbours graph construction.
+- `encoder_type`: int.  
+The type of encoder: 'foldingnet' or 'dgcnn'
+- `decoder_type`: int.  
+The type of decoder: 'foldingnet' or 'dgcnn'
+
+
+## For developers
 * Fork the repository
 * Clone your fork
 ```bash
@@ -53,5 +80,5 @@ Once the release candidate has been tested, the release version can be created w
 bump2version release
 ```
 
-### References
+## References
 [1] An Tao, 'Unsupervised Point Cloud Reconstruction for Classific Feature Learning', [GitHub Repo](https://github.com/AnTao97/UnsupervisedPointCloudReconstruction), 2020
