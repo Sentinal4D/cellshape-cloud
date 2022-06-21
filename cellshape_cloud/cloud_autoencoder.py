@@ -4,7 +4,7 @@ from ._vendor.encoders import FoldNetEncoder, DGCNNEncoder
 from ._vendor.decoders import FoldNetDecoder
 
 
-class GraphAutoEncoder(nn.Module):
+class CloudAutoEncoder(nn.Module):
     def __init__(
         self,
         num_features,
@@ -12,7 +12,7 @@ class GraphAutoEncoder(nn.Module):
         encoder_type="dgcnn",
         decoder_type="foldingnet",
     ):
-        super(GraphAutoEncoder, self).__init__()
+        super(CloudAutoEncoder, self).__init__()
         self.k = k
         self.num_features = num_features
         assert encoder_type.lower() in [

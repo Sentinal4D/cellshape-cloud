@@ -52,7 +52,9 @@ class DGCNNEncoder(nn.Module):
         )
         self.clustering = None
         self.lin_features_len = 512
-        if self.num_features < self.lin_features_len:
+        if (self.num_features < self.lin_features_len) or (
+            self.num_features > self.lin_features_len
+        ):
             self.flatten = Flatten()
             self.embedding = nn.Linear(
                 self.lin_features_len, self.num_features, bias=False
@@ -87,9 +89,8 @@ class DGCNNEncoder(nn.Module):
         x = x0.max(dim=-1, keepdim=False)[0]
         feat = x.unsqueeze(1)
 
-        if (
-            self.num_features < self.lin_features_len
-            or self.num_features > self.lin_features_len
+        if (self.num_features < self.lin_features_len) or (
+            self.num_features > self.lin_features_len
         ):
             x = self.flatten(feat)
             features = self.embedding(x)
@@ -127,7 +128,9 @@ class FoldNetEncoder(nn.Module):
         )
         self.clustering = None
         self.lin_features_len = 512
-        if self.num_features < self.lin_features_len:
+        if (self.num_features < self.lin_features_len) or (
+            self.num_features > self.lin_features_len
+        ):
             self.embedding = nn.Linear(
                 self.lin_features_len, self.num_features, bias=False
             )
@@ -156,9 +159,8 @@ class FoldNetEncoder(nn.Module):
         x = torch.max(x, 2, keepdim=True)[0]
         x = self.mlp2(x)
         feat = x.transpose(2, 1)
-        if (
-            self.num_features < self.lin_features_len
-            or self.num_features > self.lin_features_len
+        if (self.num_features < self.lin_features_len) or (
+            self.num_features > self.lin_features_len
         ):
             x = self.flatten(feat)
             features = self.embedding(x)

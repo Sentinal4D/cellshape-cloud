@@ -3,7 +3,7 @@ from tqdm import tqdm
 import logging
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
-from .reports import get_experiment_name
+from cellshape_cloud.helpers.reports import get_experiment_name
 
 
 def train(model, dataloader, num_epochs, criterion, optimizer, output_dir):
@@ -19,7 +19,7 @@ def train(model, dataloader, num_epochs, criterion, optimizer, output_dir):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.train()
-    best_loss = 1000000000
+    best_loss = float("inf")
     niter = 1
     for epoch in range(num_epochs):
         batch_num = 1
