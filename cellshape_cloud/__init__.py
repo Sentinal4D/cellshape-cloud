@@ -8,4 +8,4 @@ from ._vendor.graph_functions import *
 from ._vendor.chamfer_distance import *
 from .cloud_autoencoder import *
 
-__version__ = "0.0.2-rc0"
+__version__ = "1.0.0-rc0"
