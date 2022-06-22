@@ -27,8 +27,8 @@ from cellshape_cloud import CloudAutoEncoder
 
 model = CloudAutoEncoder(num_features=128, 
                          k=20,
-                         encoder_type='dgcnn',
-                         decoder_type='foldingnet')
+                         encoder_type="dgcnn",
+                         decoder_type="foldingnet")
 
 points = torch.randn(1, 2048, 3)
 
@@ -41,9 +41,9 @@ recon, features = model(points)
 The size of the latent space of the autoencoder. If you have rectangular images, make sure your image size is the maximum of the width and height
 - `k`: int.  
 The number of neightbours to use in the k-nearest-neighbours graph construction.
-- `encoder_type`: int.  
+- `encoder_type`: str.  
 The type of encoder: 'foldingnet' or 'dgcnn'
-- `decoder_type`: int.  
+- `decoder_type`: str.  
 The type of decoder: 'foldingnet' or 'dgcnn'
 
 
