@@ -3,14 +3,14 @@ Vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
 @Time: 2020/3/23 5:39 PM
-@License: cellshape_cloud/_vendor/models/LICENSE
+@License: cellshape_cloud/vendor/models/LICENSE
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from cellshape_cloud._vendor.graph_functions import (
+from cellshape_cloud.vendor.graph_functions import (
     get_graph_feature,
     local_maxpool,
     knn,
