@@ -44,7 +44,7 @@ setup(
         "Source Code": "https://github.com/Sentinal4D/cellshape-cloud",
         "Bug Tracker": "https://github.com/Sentinal4D/cellshape-cloud/issues",
     },
-    author="Matt De Vries, Adam Tyson",
+    author="Matt De Vries, Lucas Dent, Adam Tyson",
     author_email="mattdevries.ai@gmail.com",
     classifiers=[
         "Development Status :: 3 - Alpha",
