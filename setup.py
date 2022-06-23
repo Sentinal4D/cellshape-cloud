@@ -12,7 +12,12 @@ requirements = [
     "pyntcloud",
     "numpy",
     "matplotlib",
-    "Pillow",
+    "tqdm",
+    "datetime",
+    "logging",
+    "os",
+    "itertools",
+    "chamferdist",
 ]
 
 setup(
