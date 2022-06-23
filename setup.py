@@ -14,7 +14,6 @@ requirements = [
     "matplotlib",
     "tqdm",
     "datetime",
-    "chamferdist",
 ]
 
 setup(
@@ -35,7 +34,6 @@ setup(
             "bump2version",
             "pre-commit",
             "flake8",
-            "torch",
         ]
     },
     python_requires=">=3.7",
