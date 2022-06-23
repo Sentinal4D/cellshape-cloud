@@ -16,7 +16,6 @@ requirements = [
     "datetime",
     "logging",
     "os",
-    "itertools",
     "chamferdist",
 ]
 
