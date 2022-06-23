@@ -14,8 +14,6 @@ requirements = [
     "matplotlib",
     "tqdm",
     "datetime",
-    "logging",
-    "os",
     "chamferdist",
 ]
 
