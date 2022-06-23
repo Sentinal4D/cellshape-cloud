@@ -17,7 +17,7 @@ requirements = [
 
 setup(
     name="cellshape-cloud",
-    version="0.0.5",
+    version="0.0.6-rc0",
     description="3D cell shape analysis using geometric deep"
     " learning on point clouds",
     long_description=long_description,
