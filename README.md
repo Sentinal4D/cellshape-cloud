@@ -38,7 +38,7 @@ recon, features = model(points)
 ## Parameters
 
 - `num_features`: int.  
-The size of the latent space of the autoencoder. If you have rectangular images, make sure your image size is the maximum of the width and height
+The size of the latent space of the autoencoder. 
 - `k`: int.  
 The number of neightbours to use in the k-nearest-neighbours graph construction.
 - `encoder_type`: str.  
