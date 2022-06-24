@@ -21,6 +21,7 @@ pip install cellshape-cloud
 ```
 
 ## Usage
+### Basic Usage
 ```python
 import torch
 from cellshape_cloud import CloudAutoEncoder
@@ -34,6 +35,43 @@ points = torch.randn(1, 2048, 3)
 
 recon, features = model(points)
 ```
+
+### To train an autoencoder on a set of point clouds created using cellshape-helper:
+```python
+import torch
+from torch.utils.data import DataLoader
+
+import cellshape_cloud as cloud
+from cellshape_cloud.vendor.chamfer_distance import ChamferDistance
+
+
+input_dir = "path/to/pointcloud/files/"
+batch_size = 16
+learning_rate = 0.0001
+num_epochs = 1
+output_dir = "path/to/save/output/"
+
+model = cloud.CloudAutoEncoder(num_features=128, 
+                         k=20,
+                         encoder_type="dgcnn",
+                         decoder_type="foldingnet")
+
+dataset = cloud.PointCloudDataset(input_dir)
+
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+criterion = ChamferDistance()
+
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=learning_rate * 16 / batch_size,
+    betas=(0.9, 0.999),
+    weight_decay=1e-6,
+)
+
+cloud.train(model, dataloader, num_epochs, criterion, optimizer, output_dir)
+```
+
 
 ## Parameters
 
