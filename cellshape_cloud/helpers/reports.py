@@ -6,7 +6,7 @@ def get_model_name(model):
     encoder_type = model.encoder_type
     decoder_type = model.decoder_type
     num_features = model.encoder.num_features
-    model_name = f"{encoder_type}_{decoder_type}_{num_features}"
+    model_name = f"{encoder_type}_{decoder_type}_{num_features}_pretrained"
     return model_name
 
 
@@ -17,7 +17,6 @@ def get_experiment_name(model, output_dir):
     reports_list = sorted(os.listdir(output_dir + "reports"), reverse=True)
     if reports_list:
         for file in reports_list:
-            # print(file)
             if fnmatch.fnmatch(file, model_name + "*"):
                 idx = int(str(file)[-7:-4]) + 1
                 break

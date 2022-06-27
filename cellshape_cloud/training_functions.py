@@ -2,18 +2,12 @@ import torch
 from tqdm import tqdm
 import logging
 from torch.utils.tensorboard import SummaryWriter
-from datetime import datetime
-from cellshape_cloud.helpers.reports import get_experiment_name
 
 
-def train(model, dataloader, num_epochs, criterion, optimizer, output_dir):
-    name_logging, name_model, name_writer, name = get_experiment_name(
-        model=model, output_dir=output_dir
-    )
+def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
 
-    now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logging.basicConfig(filename=name_logging, level=logging.INFO)
-    logging.info(f"Started training model {name} at {now}.")
+    name_logging, name_model, name_writer, name = logging_info
+
     writer = SummaryWriter(log_dir=name_writer)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -69,3 +63,4 @@ def train(model, dataloader, num_epochs, criterion, optimizer, output_dir):
                 logging.info(
                     f"Saving model to {name_model} with loss = {best_loss}."
                 )
+    return model, name_logging, name_model, name_writer, name
