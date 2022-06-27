@@ -1,7 +1,7 @@
 from torch import nn
 
 from .vendor.encoders import FoldNetEncoder, DGCNNEncoder
-from .vendor.decoders import FoldNetDecoder
+from .vendor.decoders import FoldNetDecoder, FoldingNetBasicDecoder
 
 
 class CloudAutoEncoder(nn.Module):
@@ -20,7 +20,7 @@ class CloudAutoEncoder(nn.Module):
         ], "Please select an encoder type from either foldingnet or dgcnn."
 
         assert decoder_type.lower() in [
-            "foldingnet, dgcnn"
+            "foldingnet, foldingnetbasic"
         ], "Please select an decoder type from either foldingnet."
 
         self.encoder_type = encoder_type.lower()
@@ -33,7 +33,13 @@ class CloudAutoEncoder(nn.Module):
             self.encoder = FoldNetEncoder(
                 num_features=self.num_features, k=self.k
             )
-        self.decoder = FoldNetDecoder(num_features=self.num_features)
+
+        if self.decoder_type == "foldingnet":
+            self.decoder = FoldNetDecoder(num_features=self.num_features)
+        else:
+            self.decoder = FoldingNetBasicDecoder(
+                num_features=self.num_features
+            )
 
     def forward(self, x):
         features = self.encoder(x)
