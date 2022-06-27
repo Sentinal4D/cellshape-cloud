@@ -37,7 +37,7 @@ setup(
         ]
     },
     python_requires=">=3.7",
-    packages=["cellshape_cloud"],
+    packages=["cellshape_cloud", "cellshape_cloud.*"],
     package_dir={"cellshape_cloud": "cellshape_cloud"},
     include_package_data=True,
     project_urls={
