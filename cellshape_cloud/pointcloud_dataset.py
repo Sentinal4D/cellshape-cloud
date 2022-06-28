@@ -22,7 +22,7 @@ class PointCloudDataset(Dataset):
         point_cloud = PyntCloud.from_file(str(file))
         point_cloud = torch.tensor(point_cloud.points.values)
 
-        return point_cloud
+        return point_cloud, 0, 0, 0
 
 
 class SingleCellDataset(Dataset):

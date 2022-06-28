@@ -23,7 +23,7 @@ def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
             for data in tepoch:
                 tepoch.set_description(f"Epoch {epoch}")
 
-                inputs = data
+                inputs = data[0]
                 inputs = inputs.to(device)
                 batch_size = inputs.shape[0]
 
@@ -31,7 +31,7 @@ def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
                 with torch.set_grad_enabled(True):
                     output, features = model(inputs)
                     optimizer.zero_grad()
-                    loss = criterion(inputs, output, reverse=True)
+                    loss = criterion(inputs, output)
                     # ===================backward====================
                     loss.backward()
                     optimizer.step()

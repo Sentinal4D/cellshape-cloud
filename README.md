@@ -42,7 +42,7 @@ import torch
 from torch.utils.data import DataLoader
 
 import cellshape_cloud as cloud
-from cellshape_cloud.vendor.chamfer_distance import ChamferDistance
+from cellshape_cloud.vendor.chamfer_distance import ChamferLoss
 
 
 input_dir = "path/to/pointcloud/files/"
@@ -60,7 +60,7 @@ dataset = cloud.PointCloudDataset(input_dir)
 
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-criterion = ChamferDistance()
+criterion = ChamferLoss()
 
 optimizer = torch.optim.Adam(
     model.parameters(),

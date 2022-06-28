@@ -20,7 +20,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataset_path",
-        default="./datasets/",
+        default="/home/mvries/Documents/Datasets/OPM/"
+        "SingleCellFromNathan_17122021/Plate3/stacked_pointcloud",
         type=str,
         help="Please provide the path to the "
         "dataset of 3D images or point clouds",
@@ -33,14 +34,14 @@ if __name__ == "__main__":
         "containing information on the dataset.",
     )
     parser.add_argument(
-        "--output_path",
-        default="./",
+        "--output_dir",
+        default="/home/mvries/Documents/Testing_output/",
         type=str,
         help="Please provide the path for where to save output.",
     )
     parser.add_argument(
         "--num_epochs",
-        default=250,
+        default=1,
         type=int,
         help="Provide the number of epochs for the " "autoencoder training.",
     )
@@ -102,7 +103,7 @@ if __name__ == "__main__":
         "pretrained_path": args.pretrained_path,
         "dataframe_path": args.dataframe_path,
         "dataset_path": args.dataset_path,
-        "output_path": args.output_path,
+        "output_path": args.output_dir,
         "num_epochs_autoencoder": args.num_epochs,
         "num_features": args.num_features,
         "k": args.k,

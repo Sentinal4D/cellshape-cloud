@@ -17,6 +17,7 @@ requirements = [
     "umap-learn",
     "scikit-learn",
     "napari[all]",
+    "tensorboard",
 ]
 
 setup(
@@ -30,6 +31,7 @@ setup(
     extras_require={
         "dev": [
             "black",
+            "black[jupyter]",
             "pytest-cov",
             "pytest",
             "gitpython",
