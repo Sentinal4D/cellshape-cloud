@@ -16,11 +16,13 @@ class CloudAutoEncoder(nn.Module):
         self.k = k
         self.num_features = num_features
         assert encoder_type.lower() in [
-            "foldingnet, dgcnn"
+            "foldingnet",
+            "dgcnn",
         ], "Please select an encoder type from either foldingnet or dgcnn."
 
         assert decoder_type.lower() in [
-            "foldingnet, foldingnetbasic"
+            "foldingnet",
+            "foldingnetbasic",
         ], "Please select an decoder type from either foldingnet."
 
         self.encoder_type = encoder_type.lower()

@@ -14,6 +14,9 @@ requirements = [
     "matplotlib",
     "tqdm",
     "datetime",
+    "umap-learn",
+    "scikit-learn",
+    "napari[all]",
 ]
 
 setup(

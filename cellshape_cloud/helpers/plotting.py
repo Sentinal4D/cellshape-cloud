@@ -2,6 +2,10 @@ import io
 import PIL
 import torchvision
 import matplotlib.pyplot as plt
+import umap
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+import pandas as pd
 
 
 def plot_to_image(fig):
@@ -29,3 +33,22 @@ def plot_point_cloud(points):
 
     ax.scatter(points[:, 0], points[:, 1], points[:, 2], marker="o", s=10)
     return fig
+
+
+def feature_landscape(args):
+
+    np.random.seed(42)
+    scalar = StandardScaler()
+    scaled_features = scalar.fit_transform(
+        np.asarray(args.extracted_features.iloc[:, 0 : args.num_features])
+    )
+    # UMAP for vizualization
+    # n_neighbors=5, min_dist=0.0125
+    reducer = umap.UMAP(random_state=42)
+    embedding = reducer.fit_transform(scaled_features)
+    b = np.zeros((len(embedding), 2))
+    b[:, 0] = embedding[:, 0]
+    b[:, 1] = embedding[:, 1]
+
+    data = pd.DataFrame(b, columns=["Umap1", "Umap2"])
+    data["Treatment"] = args.extracted_features["Treatment"].values

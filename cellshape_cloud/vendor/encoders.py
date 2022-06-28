@@ -59,9 +59,6 @@ class DGCNNEncoder(nn.Module):
             self.embedding = nn.Linear(
                 self.lin_features_len, self.num_features, bias=False
             )
-            self.deembedding = nn.Linear(
-                self.num_features, self.lin_features_len, bias=False
-            )
 
     def forward(self, x):
         x = x.transpose(2, 1)
@@ -133,9 +130,6 @@ class FoldNetEncoder(nn.Module):
         ):
             self.embedding = nn.Linear(
                 self.lin_features_len, self.num_features, bias=False
-            )
-            self.deembedding = nn.Linear(
-                self.num_features, self.lin_features_len, bias=False
             )
 
     def graph_layer(self, x, idx):

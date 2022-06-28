@@ -56,7 +56,7 @@ class FoldingNetBasicDecoder(nn.Module):
         # make grid
         range_x = torch.linspace(-3.0, 3.0, 45)
         range_y = torch.linspace(-3.0, 3.0, 45)
-        x_coor, y_coor = torch.meshgrid(range_x, range_y)
+        x_coor, y_coor = torch.meshgrid(range_x, range_y, indexing="ij")
         self.grid = (
             torch.stack([x_coor, y_coor], axis=-1).float().reshape(-1, 2)
         )
@@ -73,7 +73,7 @@ class FoldingNetBasicDecoder(nn.Module):
             x = x.unsqueeze(1)
         grid = self.grid.cuda().unsqueeze(0).expand(x.shape[0], -1, -1)
         outputs = self.folding(x, grid)
-        return outputs, grid
+        return outputs
 
 
 class FoldNetDecoder(nn.Module):
