@@ -1,13 +1,6 @@
-import torch
-from torch.utils.data import DataLoader
 import argparse
-from datetime import datetime
-import logging
 
-
-import cellshape_cloud as cscloud
-from cellshape_cloud.vendor.chamfer_distance import ChamferLoss
-from cellshape_cloud.helpers.reports import get_experiment_name
+from train_autoencoder import train_autoencoder
 
 
 if __name__ == "__main__":
@@ -43,7 +36,7 @@ if __name__ == "__main__":
         "--num_epochs",
         default=1,
         type=int,
-        help="Provide the number of epochs for the " "autoencoder training.",
+        help="Provide the number of epochs for the autoencoder training.",
     )
     parser.add_argument(
         "--num_features",
@@ -113,35 +106,4 @@ if __name__ == "__main__":
         "batch_size": args.batch_size,
     }
 
-    model = cscloud.CloudAutoEncoder(
-        num_features=args.num_features,
-        k=args.k,
-        encoder_type=args.encoder_type,
-        decoder_type=args.decoder_type,
-    )
-
-    dataset = cscloud.PointCloudDataset(args.dataset_path)
-
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
-
-    criterion = ChamferLoss()
-
-    optimizer = torch.optim.Adam(
-        model.parameters(),
-        lr=args.learning_rate * 16 / args.batch_size,
-        betas=(0.9, 0.999),
-        weight_decay=1e-6,
-    )
-
-    name_logging, name_model, name_writer, name = get_experiment_name(
-        model=model, output_dir=args.output_dir
-    )
-    logging_info = name_logging, name_model, name_writer, name
-
-    now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logging.basicConfig(filename=name_logging, level=logging.INFO)
-    logging.info(f"Started training model {name} at {now}.")
-
-    output = cscloud.train(
-        model, dataloader, args.num_epochs, criterion, optimizer, logging_info
-    )
+    output = train_autoencoder(args)

@@ -63,4 +63,5 @@ def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
                 logging.info(
                     f"Saving model to {name_model} with loss = {best_loss}."
                 )
+                print(f"Saving model to {name_model} with loss = {best_loss}.")
     return model, name_logging, name_model, name_writer, name
