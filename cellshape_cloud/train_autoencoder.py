@@ -86,8 +86,8 @@ def train_autoencoder(args):
         logging.info("Training from scratch")
         print(
             f"The autoencoder model at "
-            f"{args.pretrained_path} doesn't exist."
-            f"if you knew this already, then don't worry. "
+            f"{args.pretrained_path} doesn't exist. "
+            f"If you knew this already, then don't worry. "
             f"If not, then check the path and try again"
         )
         print("Training from scratch")
@@ -102,7 +102,7 @@ def train_autoencoder(args):
         print(
             f"The autoencoder model at {args.pretrained_path} "
             f"has a different architecture to the one provided "
-            f"If not, then check the path and try again"
+            f"If not, then check the path and try again."
         )
         print("Training from scratch")
 
