@@ -12,12 +12,22 @@ if __name__ == "__main__":
         help="Do you need to convert 3D images to point clouds?",
     )
     parser.add_argument(
-        "--dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/"
-        "SingleCellFromNathan_17122021/Plate3/stacked_pointcloud",
+        "--tif_dataset_path",
+        default="./dataset_tif/",
         type=str,
-        help="Please provide the path to the "
-        "dataset of 3D images or point clouds",
+        help="Please provide the path to the " "dataset of 3D tif images",
+    )
+    parser.add_argument(
+        "--mesh_dataset_path",
+        default="./dataset_mesh/",
+        type=str,
+        help="Please provide the path to the " "dataset of 3D meshes.",
+    )
+    parser.add_argument(
+        "--cloud_dataset_path",
+        default="./dataset_cloud/",
+        type=str,
+        help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataframe_path",
@@ -89,21 +99,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    if args.cloud_convert:
-        print("Converting tif to point cloud using cellshape-helper")
-    params = {
-        "cloud_convert": args.cloud_convert,
-        "pretrained_path": args.pretrained_path,
-        "dataframe_path": args.dataframe_path,
-        "dataset_path": args.dataset_path,
-        "output_path": args.output_dir,
-        "num_epochs_autoencoder": args.num_epochs,
-        "num_features": args.num_features,
-        "k": args.k,
-        "encoder_type": args.encoder_type,
-        "decoder_type": args.decoder_type,
-        "learning_rate": args.learning_rate,
-        "batch_size": args.batch_size,
-    }
+    # if args.cloud_convert:
+    #     print("Converting tif to point cloud using cellshape-helper")
 
     output = train_autoencoder(args)

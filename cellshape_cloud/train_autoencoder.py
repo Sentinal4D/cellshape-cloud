@@ -15,21 +15,29 @@ def train_autoencoder(args):
         encoder_type=args.encoder_type,
         decoder_type=args.decoder_type,
     )
+    everything_working = True
+    file_not_found = False
+    wrong_architecture = False
     try:
         checkpoint = torch.load(args.pretrained_path)
     except FileNotFoundError:
         print(
-            "This model doesn't exist. "
+            "This model doesn't exist."
             "Please check the provided path and try again."
         )
         checkpoint = {"model_state_dict": None}
-
+        file_not_found = True
+        everything_working = False
     try:
         autoencoder.load_state_dict(checkpoint["model_state_dict"])
         print(f"The loss of the loaded model is {checkpoint['loss']}")
     except RuntimeError:
-        print("The model architecture given doesn't match the one provided.")
+        print(
+            "The model architecture given doesn't " "match the one provided."
+        )
         print("Training from scratch")
+        wrong_architecture = True
+        everything_working = False
     except AttributeError:
         print("Training from scratch")
 
@@ -38,7 +46,7 @@ def train_autoencoder(args):
             args.dataframe_path, args.cloud_dataset_path
         )
     else:
-        dataset = cscloud.PointCloudDataset(args.input_dir)
+        dataset = cscloud.PointCloudDataset(args.cloud_dataset_path)
 
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 
@@ -56,8 +64,48 @@ def train_autoencoder(args):
     name_logging, name_model, name_writer, name = logging_info
     now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     logging.basicConfig(filename=name_logging, level=logging.INFO)
-    logging.info(f"Started training model {name} at {now}.")
-    print(f"Started training model {name} at {now}.")
+
+    if everything_working:
+        logging.info(
+            f"Started training cluster model {name} at {now} "
+            f"using autoencoder which is "
+            f"saved at {args.pretrained_path}."
+        )
+        print(
+            f"Started training model {name} at {now}."
+            f"using autoencoder which is s"
+            f"aved at {args.pretrained_path}."
+        )
+    if file_not_found:
+        logging.info(
+            f"The autoencoder model at {args.pretrained_path}"
+            f" doesn't exist."
+            f"if you knew this already, then don't worry. "
+            f"If not, then check the path and try again"
+        )
+        logging.info("Training from scratch")
+        print(
+            f"The autoencoder model at "
+            f"{args.pretrained_path} doesn't exist."
+            f"if you knew this already, then don't worry. "
+            f"If not, then check the path and try again"
+        )
+        print("Training from scratch")
+
+    if wrong_architecture:
+        logging.info(
+            f"The autoencoder model at {args.pretrained_path} has "
+            f"a different architecture to the one provided "
+            f"If not, then check the path and try again"
+        )
+        logging.info("Training from scratch")
+        print(
+            f"The autoencoder model at {args.pretrained_path} "
+            f"has a different architecture to the one provided "
+            f"If not, then check the path and try again"
+        )
+        print("Training from scratch")
+
     for arg, value in sorted(vars(args).items()):
         logging.info(f"Argument {arg}: {value}")
         print(f"Argument {arg}: {value}")

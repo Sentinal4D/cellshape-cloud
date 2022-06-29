@@ -16,7 +16,6 @@ requirements = [
     "datetime",
     "umap-learn",
     "scikit-learn",
-    "napari[all]",
     "tensorboard",
 ]
 
