@@ -11,4 +11,4 @@ from .cloud_autoencoder import *
 from .train_autoencoder import *
 
 
-__version__ = "0.0.15-rc0"
+__version__ = "0.0.16-rc0"
