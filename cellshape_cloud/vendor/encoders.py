@@ -10,13 +10,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from cellshape_cloud.vendor.graph_functions import (
+from vendor.graph_functions import (
     get_graph_feature,
     local_maxpool,
     knn,
     local_cov,
 )
-from cellshape_cloud.helpers.helper_modules import Flatten
+from helpers.helper_modules import Flatten
 
 
 class DGCNNEncoder(nn.Module):

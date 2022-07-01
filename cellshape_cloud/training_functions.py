@@ -3,7 +3,7 @@ from tqdm import tqdm
 import logging
 from torch.utils.tensorboard import SummaryWriter
 
-from cellshape_cloud import print_log
+from helpers.reports import print_log
 
 
 def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):

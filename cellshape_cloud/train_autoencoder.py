@@ -4,12 +4,15 @@ from datetime import datetime
 import logging
 
 
-import cellshape_cloud as cscloud
-from cellshape_cloud.vendor.chamfer_distance import ChamferLoss
+from vendor.chamfer_distance import ChamferLoss
+from pointcloud_dataset import PointCloudDataset, SingleCellDataset
+from cloud_autoencoder import CloudAutoEncoder
+from helpers.reports import get_experiment_name
+from training_functions import train
 
 
 def train_autoencoder(args):
-    autoencoder = cscloud.CloudAutoEncoder(
+    autoencoder = CloudAutoEncoder(
         num_features=args.num_features,
         k=args.k,
         encoder_type=args.encoder_type,
@@ -42,11 +45,11 @@ def train_autoencoder(args):
         print("Training from scratch")
 
     if args.dataset_type == "SingleCell":
-        dataset = cscloud.SingleCellDataset(
+        dataset = SingleCellDataset(
             args.dataframe_path, args.cloud_dataset_path
         )
     else:
-        dataset = cscloud.PointCloudDataset(args.cloud_dataset_path)
+        dataset = PointCloudDataset(args.cloud_dataset_path)
 
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 
@@ -58,7 +61,7 @@ def train_autoencoder(args):
         betas=(0.9, 0.999),
         weight_decay=1e-6,
     )
-    logging_info = cscloud.get_experiment_name(
+    logging_info = get_experiment_name(
         model=autoencoder, output_dir=args.output_dir
     )
     name_logging, name_model, name_writer, name = logging_info
@@ -110,7 +113,7 @@ def train_autoencoder(args):
         logging.info(f"Argument {arg}: {value}")
         print(f"Argument {arg}: {value}")
 
-    autoencoder, name_logging, name_model, name_writer, name = cscloud.train(
+    autoencoder, name_logging, name_model, name_writer, name = train(
         model=autoencoder,
         dataloader=dataloader,
         num_epochs=args.num_epochs_autoencoder,

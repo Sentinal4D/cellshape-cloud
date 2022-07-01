@@ -22,13 +22,12 @@ class PointCloudDataset(Dataset):
         file = self.files[idx]
         point_cloud = PyntCloud.from_file(str(file))
         mean = 0
+        point_cloud = torch.tensor(point_cloud.points.values)
         if self.centre:
-            point_cloud = torch.tensor(point_cloud.points.values)
             mean = torch.mean(point_cloud, 0)
 
         scale = torch.tensor([[self.scale, self.scale, self.scale]])
         point_cloud = (point_cloud - mean) / scale
-        point_cloud = torch.tensor(point_cloud.points.values)
 
         return point_cloud, 0, 0, 0
 
