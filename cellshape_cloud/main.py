@@ -11,23 +11,36 @@ if __name__ == "__main__":
         type=bool,
         help="Do you need to convert 3D images to point clouds?",
     )
+
     parser.add_argument(
         "--tif_dataset_path",
-        default="./dataset_tif/",
+        default="/home/mvries/Documents/CellShape/"
+        "UploadData/Dataset/TestConvert/TestTiff/",
         type=str,
         help="Please provide the path to the " "dataset of 3D tif images",
     )
     parser.add_argument(
         "--mesh_dataset_path",
-        default="./dataset_mesh/",
+        default="/home/mvries/Documents/CellShape/"
+        "UploadData/Dataset/TestConvert/TestMesh/",
         type=str,
         help="Please provide the path to the " "dataset of 3D meshes.",
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="./dataset_cloud/",
+        default="/home/mvries/Documents/CellShape/"
+        "UploadData/Dataset/TestConvert/TestPointCloud/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
+    )
+    parser.add_argument(
+        "--dataset_type",
+        default="Other",
+        type=str,
+        choices=["SingleCell", "Other"],
+        help="Please provide the type of dataset. "
+        "If using the one from our paper, then choose 'SingleCell', "
+        "otherwise, choose 'Other'.",
     )
     parser.add_argument(
         "--dataframe_path",
@@ -43,7 +56,7 @@ if __name__ == "__main__":
         help="Please provide the path for where to save output.",
     )
     parser.add_argument(
-        "--num_epochs",
+        "--num_epochs_autoencoder",
         default=1,
         type=int,
         help="Provide the number of epochs for the autoencoder training.",
@@ -70,7 +83,7 @@ if __name__ == "__main__":
         help="Please provide the type of decoder.",
     )
     parser.add_argument(
-        "--learning_rate",
+        "--learning_rate_autoencoder",
         default=0.0001,
         type=float,
         help="Please provide the learning rate "

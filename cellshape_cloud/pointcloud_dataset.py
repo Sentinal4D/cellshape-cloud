@@ -7,10 +7,11 @@ import os
 
 
 class PointCloudDataset(Dataset):
-    def __init__(self, img_dir, normalise=True):
-        self.img_dir = img_dir
-        self.normalise = normalise
-        self.p = Path(self.img_dir)
+    def __init__(self, points_dir, centre=True, scale=20.0):
+        self.points_dir = points_dir
+        self.centre = centre
+        self.scale = scale
+        self.p = Path(self.points_dir)
         self.files = list(self.p.glob("**/*.ply"))
 
     def __len__(self):
@@ -20,6 +21,13 @@ class PointCloudDataset(Dataset):
         # read the image
         file = self.files[idx]
         point_cloud = PyntCloud.from_file(str(file))
+        mean = 0
+        if self.centre:
+            point_cloud = torch.tensor(point_cloud.points.values)
+            mean = torch.mean(point_cloud, 0)
+
+        scale = torch.tensor([[self.scale, self.scale, self.scale]])
+        point_cloud = (point_cloud - mean) / scale
         point_cloud = torch.tensor(point_cloud.points.values)
 
         return point_cloud, 0, 0, 0
