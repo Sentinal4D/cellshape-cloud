@@ -1,6 +1,6 @@
 import argparse
 
-from cellshape_cloud.helpers.extract import extract
+from .helpers.extract import extract
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

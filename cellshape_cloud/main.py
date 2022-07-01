@@ -1,6 +1,6 @@
 import argparse
 
-from train_autoencoder import train_autoencoder
+from .train_autoencoder import train_autoencoder
 
 
 if __name__ == "__main__":
