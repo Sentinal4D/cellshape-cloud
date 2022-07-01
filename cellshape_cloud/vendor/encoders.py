@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from vendor.graph_functions import (
+from .vendor.graph_functions import (
     get_graph_feature,
     local_maxpool,
     knn,
