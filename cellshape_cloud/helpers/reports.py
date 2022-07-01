@@ -1,5 +1,6 @@
 import fnmatch
 import os
+import logging
 
 
 def get_model_name(model):
@@ -33,3 +34,8 @@ def get_experiment_name(model, output_dir):
     name_writer = os.path.join(output_dir + "runs", name)
 
     return name_logging, name_model, name_writer, name
+
+
+def print_log(string):
+    logging.info(string)
+    print(string)

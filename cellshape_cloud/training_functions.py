@@ -3,6 +3,8 @@ from tqdm import tqdm
 import logging
 from torch.utils.tensorboard import SummaryWriter
 
+from cellshape_cloud import print_log
+
 
 def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
 
@@ -64,4 +66,8 @@ def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
                     f"Saving model to {name_model} with loss = {best_loss}."
                 )
                 print(f"Saving model to {name_model} with loss = {best_loss}.")
+
+        logging.info(f"Finished epoch {epoch} with loss={loss}.")
+        print(f"Finished epoch {epoch} with loss={loss}.")
+    print_log(f"Finished training {num_epochs}.")
     return model, name_logging, name_model, name_writer, name
