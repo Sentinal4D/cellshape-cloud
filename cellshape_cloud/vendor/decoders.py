@@ -1,9 +1,14 @@
 """
-some code Vendored and adapted from:
+some code (class FoldNetDecoder) vendored and adapted from:
 @Author: An Tao
 @Contact: ta19@mails.tsinghua.edu.cn
 @Time: 2020/3/23 5:39 PM
-@License: cellshape_cloud/vendor/models/LICENSE
+@License: cellshape_cloud/vendor/models/LICENSE_AnTao
+#################################
+classes FoldingModule and FoldingNetBasicDecoder were
+vendored and adapted from:
+https://github.com/InterDigitalInc/TearingNet/blob/master/models/foldingnet.py
+Owner: https://www.interdigital.com/
 """
 import torch
 from torch import nn
