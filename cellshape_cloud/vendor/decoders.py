@@ -105,9 +105,6 @@ class FoldNetDecoder(nn.Module):
 
         self.lin_features_len = 512
         if self.num_features < self.lin_features_len:
-            self.embedding = nn.Linear(
-                self.lin_features_len, self.num_features, bias=False
-            )
             self.deembedding = nn.Linear(
                 self.num_features, self.lin_features_len, bias=False
             )
