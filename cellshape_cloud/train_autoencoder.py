@@ -26,7 +26,8 @@ def train_autoencoder(args):
     except FileNotFoundError:
         print(
             "This model doesn't exist."
-            "Please check the provided path and try again."
+            " Please check the provided path and try again. "
+            "Ignore this message if you do not have a pretrained model."
         )
         checkpoint = {"model_state_dict": None}
         file_not_found = True

@@ -104,9 +104,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs/smb-share:server=rds.icr.ac.uk,"
-        "share=data/DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/TearingNetNew/"
-        "nets/dgcnn_foldingnet_128_008.pt",
+        default=None,
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
