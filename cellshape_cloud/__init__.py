@@ -10,4 +10,4 @@ from .vendor.chamfer_distance import *
 from .cloud_autoencoder import *
 from .train_autoencoder import *
 
-__version__ = "0.0.19"
+__version__ = "0.0.20-rc0"
