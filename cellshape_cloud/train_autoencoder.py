@@ -32,6 +32,10 @@ def train_autoencoder(args):
         checkpoint = {"model_state_dict": None}
         file_not_found = True
         everything_working = False
+    except AttributeError:
+        print("No pretrained model given.")
+        checkpoint = {"model_state_dict": None}
+        everything_working = False
     try:
         autoencoder.load_state_dict(checkpoint["model_state_dict"])
         print(f"The loss of the loaded model is {checkpoint['loss']}")
