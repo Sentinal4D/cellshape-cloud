@@ -67,7 +67,7 @@ def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
                 )
                 print(f"Saving model to {name_model} with loss = {best_loss}.")
 
-        logging.info(f"Finished epoch {epoch} with loss={loss}.")
-        print(f"Finished epoch {epoch} with loss={loss}.")
+        logging.info(f"Finished epoch {epoch} with loss={best_loss}.")
+        print(f"Finished epoch {epoch} with loss={best_loss}.")
     print_log(f"Finished training {num_epochs}.")
     return model, name_logging, name_model, name_writer, name
