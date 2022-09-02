@@ -4,11 +4,11 @@ from datetime import datetime
 import logging
 
 
-from .vendor.chamfer_distance import ChamferLoss
-from .pointcloud_dataset import PointCloudDataset, SingleCellDataset
-from .cloud_autoencoder import CloudAutoEncoder
-from .helpers.reports import get_experiment_name
-from .training_functions import train
+from vendor.chamfer_distance import ChamferLoss
+from pointcloud_dataset import PointCloudDataset, SingleCellDataset
+from cloud_autoencoder import CloudAutoEncoder
+from reports import get_experiment_name
+from training_functions import train
 
 
 def train_autoencoder(args):
