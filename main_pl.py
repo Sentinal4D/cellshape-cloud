@@ -58,7 +58,7 @@ def train_vae_pl(args):
         accelerator="gpu",
         devices=args.gpus,
         max_epochs=args.num_epochs_autoencoder,
-        default_root_dir=logging_info[3],
+        default_root_dir=args.output_dir + logging_info[3],
         callbacks=[checkpoint_callback],
     )
 
