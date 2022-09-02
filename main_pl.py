@@ -8,6 +8,7 @@ from cellshape_cloud.lightning_autoencoder import CloudAutoEncoderPL
 from cellshape_cloud.pointcloud_dataset import (
     PointCloudDataset,
     SingleCellDataset,
+    GefGapDataset,
 )
 from reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
@@ -34,6 +35,10 @@ def train_vae_pl(args):
         dataset = SingleCellDataset(
             args.dataframe_path, args.cloud_dataset_path
         )
+
+    elif args.dataset_type == "GefGap":
+        dataset = GefGapDataset(args.dataframe_path, args.cloud_dataset_path)
+
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
 
@@ -116,25 +121,23 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/"
-        "SingleCellFromNathan_17122021/",
+        default="/home/mvries/Documents/Datasets/OPM/" "VickyPlates_010922/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="SingleCell",
+        default="GefGap",
         type=str,
-        choices=["SingleCell", "Other"],
+        choices=["SingleCell", "GefGap", "Other"],
         help="Please provide the type of dataset. "
         "If using the one from our paper, then choose 'SingleCell', "
         "otherwise, choose 'Other'.",
     )
     parser.add_argument(
         "--dataframe_path",
-        default="/home/mvries/Documents/Datasets/OPM/"
-        "SingleCellFromNathan_17122021/"
-        "all_data_removedwrong_ori_removedTwo.csv",
+        default="/home/mvries/Documents/Datasets/OPM/VickyPlates_010922/"
+        "cn_allFeatures_withGeneNames_updated.csv",
         type=str,
         help="Please provide the path to the dataframe "
         "containing information on the dataset.",

@@ -85,3 +85,55 @@ class SingleCellDataset(Dataset):
         serial_number = self.new_df.loc[idx, "serialNumber"]
 
         return image, treatment, feats, serial_number
+
+
+class GefGapDataset(Dataset):
+    def __init__(
+        self,
+        annotations_file,
+        img_dir,
+        img_size=400,
+        label_col="Treatment",
+        transform=None,
+        target_transform=None,
+        cell_component="cell",
+    ):
+        self.new_df = pd.read_csv(annotations_file)
+        self.img_dir = img_dir
+        self.img_size = img_size
+        self.label_col = label_col
+        self.transform = transform
+        self.target_transform = target_transform
+        self.cell_component = cell_component
+
+    def __len__(self):
+        return len(self.new_df)
+
+    def __getitem__(self, idx):
+        # read the image
+        plate_num = self.new_df.loc[idx, "PlateNumber"]
+        treatment = self.new_df.loc[idx, "GEF_GAP_GTPase"]
+        plate = "Plate" + str(plate_num)
+        if self.cell_component == "cell":
+            component_path = "stacked_pointcloud"
+        else:
+            component_path = "stacked_pointcloud_nucleus"
+
+        img_path = os.path.join(
+            self.img_dir,
+            plate,
+            component_path,
+            "Cells",
+            self.new_df.loc[idx, "serialNumber"],
+        )
+        image = PyntCloud.from_file(img_path + ".ply")
+        image = image.points.values
+
+        image = torch.tensor(image)
+        mean = torch.mean(image, 0)
+        std = torch.tensor([[20.0, 20.0, 20.0]])
+        image = (image - mean) / std
+
+        serial_number = self.new_df.loc[idx, "serialNumber"]
+
+        return image, treatment, 0, serial_number
