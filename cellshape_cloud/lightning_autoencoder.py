@@ -58,5 +58,6 @@ class CloudAutoEncoderPL(pl.LightningModule):
         outputs, features = self.model(inputs)
 
         loss = self.criterion(inputs, outputs)
+        self.log("loss", loss)
 
         return loss
