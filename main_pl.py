@@ -2,6 +2,7 @@ from torch.utils.data import DataLoader
 import argparse
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.plugins import DDPPlugin
 import logging
 
 from cellshape_cloud.lightning_autoencoder import CloudAutoEncoderPL
@@ -60,6 +61,7 @@ def train_vae_pl(args):
         max_epochs=args.num_epochs_autoencoder,
         default_root_dir=args.output_dir + logging_info[3],
         callbacks=[checkpoint_callback],
+        plugins=DDPPlugin(find_unused_parameters=False),
     )
 
     if find_lr:
