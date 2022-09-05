@@ -2,7 +2,7 @@ import torch
 
 import pytorch_lightning as pl
 
-from vendor.chamfer_distance import ChamferLoss
+from .vendor.chamfer_distance import ChamferLoss
 
 
 class CloudAutoEncoderPL(pl.LightningModule):
