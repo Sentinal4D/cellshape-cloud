@@ -10,7 +10,7 @@ from cellshape_cloud.pointcloud_dataset import (
     SingleCellDataset,
     GefGapDataset,
 )
-from reports import get_experiment_name
+from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
 
 
