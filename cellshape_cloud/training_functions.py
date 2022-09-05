@@ -3,7 +3,7 @@ from tqdm import tqdm
 import logging
 from torch.utils.tensorboard import SummaryWriter
 
-from reports import print_log
+from .reports import print_log
 
 
 def train(model, dataloader, num_epochs, criterion, optimizer, logging_info):
