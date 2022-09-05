@@ -108,7 +108,7 @@ def mesh_to_pc(mesh_directory, num_points, save_dir):
             data = read_off(mesh_file)
             # changed to .numpy() to avoid issue with pyntcloud
             points = sample_points(data=data, num=num_points).numpy()
-            save_to_points_path = save_dir + folder.name
+            save_to_points_path = save_dir + folder.name + "/"
             create_dir_if_not_exist(save_to_points_path)
             split_string = mesh_file_path.name.split(".")
             file_name = split_string[0]
