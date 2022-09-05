@@ -120,11 +120,12 @@ def mesh_to_pc(mesh_directory, num_points, save_dir):
 
 # Plate 1
 PATH_TO_SAVE_MESH = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
-    "SingleCellFromNathan_17122021/Plate1/stacked_off/raw/"
+    "/home/mvries/Documents/Datasets/OPM/"
+    "SingleCellFromNathan_17122021/Plate1/"
+    "stacked_off/raw/"
 )
 PATH_TO_SAVE_PC = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
+    "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate1/"
     "stacked_pointcloud_4096/"
 )
@@ -135,11 +136,12 @@ mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
 
 # Plate 2
 PATH_TO_SAVE_MESH = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
-    "SingleCellFromNathan_17122021/Plate2/stacked_off/raw/"
+    "/home/mvries/Documents/Datasets/OPM/"
+    "SingleCellFromNathan_17122021/Plate2/"
+    "stacked_off/raw/"
 )
 PATH_TO_SAVE_PC = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
+    "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate2/"
     "stacked_pointcloud_4096/"
 )
@@ -149,11 +151,11 @@ mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
 
 # Plate 3
 PATH_TO_SAVE_MESH = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
+    "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate3/stacked_off/raw/"
 )
 PATH_TO_SAVE_PC = (
-    "/data/scratch/DBI/DUDBI/DYNCESYS/mvries/"
+    "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate3/"
     "stacked_pointcloud_4096/"
 )
