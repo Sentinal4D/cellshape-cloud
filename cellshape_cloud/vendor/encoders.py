@@ -16,7 +16,7 @@ from .graph_functions import (
     knn,
     local_cov,
 )
-from helper_modules import Flatten
+from cellshape_cloud.helper_modules import Flatten
 
 
 class DGCNNEncoder(nn.Module):
