@@ -92,19 +92,25 @@ class GefGapDataset(Dataset):
         self,
         annotations_file,
         img_dir,
-        img_size=400,
+        img_size=100,
         label_col="Treatment",
         transform=None,
         target_transform=None,
         cell_component="cell",
     ):
-        self.new_df = pd.read_csv(annotations_file)
+        self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.img_size = img_size
         self.label_col = label_col
         self.transform = transform
         self.target_transform = target_transform
         self.cell_component = cell_component
+
+        self.new_df = self.annot_df[
+            (self.annot_df.xDim_cell <= self.img_size)
+            & (self.annot_df.yDim_cell <= self.img_size)
+            & (self.annot_df.zDim_cell <= self.img_size)
+        ].reset_index(drop=True)
 
     def __len__(self):
         return len(self.new_df)

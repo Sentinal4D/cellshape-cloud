@@ -121,7 +121,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/" "VickyPlates_010922/",
+        default="/home/mvries/Documents/Datasets/OPM/" "VickyCellshape/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataframe_path",
-        default="/home/mvries/Documents/Datasets/OPM/VickyPlates_010922/"
+        default="/home/mvries/Documents/Datasets/OPM/VickyCellshape/"
         "cn_allFeatures_withGeneNames_updated.csv",
         type=str,
         help="Please provide the path to the dataframe "
