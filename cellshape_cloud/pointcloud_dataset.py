@@ -99,6 +99,7 @@ class GefGapDataset(Dataset):
         transform=None,
         target_transform=None,
         cell_component="cell",
+        norm_std=False,
     ):
         self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = img_dir
@@ -107,6 +108,7 @@ class GefGapDataset(Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self.cell_component = cell_component
+        self.norm_std = norm_std
 
         self.new_df = self.annot_df[
             (self.annot_df.xDim_cell <= self.img_size)
@@ -139,7 +141,10 @@ class GefGapDataset(Dataset):
 
         image = torch.tensor(image)
         mean = torch.mean(image, 0)
-        std = torch.tensor([[20.0, 20.0, 20.0]])
+        if self.norm_std:
+            std = torch.tensor([[20.0, 20.0, 20.0]])
+        else:
+            std = torch.tensor([4.2266, 13.5636, 14.1695])
         image = (image - mean) / std
 
         serial_number = self.new_df.loc[idx, "serialNumber"]
