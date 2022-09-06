@@ -46,13 +46,11 @@ def train_vae_pl(args):
         dataset, batch_size=args.batch_size, shuffle=True, num_workers=4
     )
 
-    checkpoint_callback = ModelCheckpoint(
-        dirpath=args.output_dir, save_top_k=1, monitor="loss"
-    )
-
     logging_info = get_experiment_name(
         model=autoencoder.model, output_dir=args.output_dir
     )
+
+    checkpoint_callback = ModelCheckpoint(save_top_k=1, monitor="loss")
 
     trainer = pl.Trainer(
         accelerator="gpu",

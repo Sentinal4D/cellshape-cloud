@@ -40,12 +40,14 @@ class SingleCellDataset(Dataset):
         img_size=400,
         transform=None,
         cell_component="cell",
+        num_points=2048,
     ):
         self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = points_dir
         self.img_size = img_size
         self.transform = transform
         self.cell_component = cell_component
+        self.num_points = num_points
 
         self.new_df = self.annot_df[
             (self.annot_df.xDim <= self.img_size)
