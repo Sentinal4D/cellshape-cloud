@@ -238,7 +238,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--num_points",
-        default=2048,
+        default=4096,
         type=int,
         help="Enter the number of points in the point cloud",
     )
