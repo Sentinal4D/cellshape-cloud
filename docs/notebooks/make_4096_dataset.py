@@ -127,9 +127,9 @@ PATH_TO_SAVE_MESH = (
 PATH_TO_SAVE_PC = (
     "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate1/"
-    "stacked_pointcloud_4096/"
+    "stacked_pointcloud_1024/"
 )
-NUM_POINTS = 4096
+NUM_POINTS = 1024
 
 mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
 
@@ -143,9 +143,9 @@ PATH_TO_SAVE_MESH = (
 PATH_TO_SAVE_PC = (
     "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate2/"
-    "stacked_pointcloud_4096/"
+    "stacked_pointcloud_1024/"
 )
-NUM_POINTS = 4096
+NUM_POINTS = 1024
 
 mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
 
@@ -157,8 +157,8 @@ PATH_TO_SAVE_MESH = (
 PATH_TO_SAVE_PC = (
     "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate3/"
-    "stacked_pointcloud_4096/"
+    "stacked_pointcloud_1024/"
 )
-NUM_POINTS = 4096
+NUM_POINTS = 1024
 
 mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)

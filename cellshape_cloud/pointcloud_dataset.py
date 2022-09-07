@@ -62,10 +62,17 @@ class SingleCellDataset(Dataset):
         # read the image
         treatment = self.new_df.loc[idx, "Treatment"]
         plate_num = "Plate" + str(self.new_df.loc[idx, "PlateNumber"])
-        if self.cell_component == "cell":
-            component_path = "stacked_pointcloud"
+        if self.num_points == 4096:
+            num_str = "_4096"
+        elif self.num_points == 1024:
+            num_str = "_1024"
         else:
-            component_path = "stacked_pointcloud_nucleus"
+            num_str = ""
+
+        if self.cell_component == "cell":
+            component_path = "stacked_pointcloud" + num_str
+        else:
+            component_path = "stacked_pointcloud_nucleus" + num_str
 
         img_path = os.path.join(
             self.img_dir,
@@ -99,7 +106,7 @@ class GefGapDataset(Dataset):
         transform=None,
         target_transform=None,
         cell_component="cell",
-        norm_std=False,
+        norm_std=True,
     ):
         self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = img_dir

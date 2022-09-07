@@ -53,6 +53,12 @@ class CloudAutoEncoderPL(pl.LightningModule):
 
         self.model.load_state_dict(model_dict)
 
+    def load_lightning(self, path):
+        checkpoint = torch.load(
+            path, map_location=lambda storage, loc: storage
+        )
+        self.load_state_dict(checkpoint["state_dict"])
+
     def training_step(self, batch, batch_idx):
         inputs = batch[0]
         outputs, features = self.model(inputs)

@@ -26,18 +26,32 @@ def train_vae_pl(args):
     )
     autoencoder = CloudAutoEncoderPL(args=args, model=model)
 
-    try:
-        autoencoder.load_model(args.pretrained_path)
-    except Exception as e:
-        print(f"Can't load pretrained network due to error {e}")
+    if args.is_pretrained_lightning:
+        try:
+            autoencoder.load_lightning(args.pretrained_path)
+
+        except Exception as e:
+            print(f"Cannot load model due to error {e}.")
+
+    else:
+        try:
+            autoencoder.load_model(args.pretrained_path)
+        except Exception as e:
+            print(f"Can't load pretrained network due to error {e}.")
 
     if args.dataset_type == "SingleCell":
         dataset = SingleCellDataset(
-            args.dataframe_path, args.cloud_dataset_path
+            args.dataframe_path,
+            args.cloud_dataset_path,
+            num_points=args.num_points,
         )
 
     elif args.dataset_type == "GefGap":
-        dataset = GefGapDataset(args.dataframe_path, args.cloud_dataset_path)
+        dataset = GefGapDataset(
+            args.dataframe_path,
+            args.cloud_dataset_path,
+            norm_std=args.norm_std,
+        )
 
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
@@ -176,7 +190,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--learning_rate_autoencoder",
-        default=0.00001,
+        default=0.0000001,
         type=float,
         help="Please provide the learning rate "
         "for the autoencoder training.",
@@ -196,19 +210,38 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs/smb-share:server="
-        "rds.icr.ac.uk,share=data"
-        "/DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/TearingNetNew/"
-        "nets/dgcnn_foldingnet_128_009.pt",
+        default="/run/user/1128299809/gvfs"
+        "/smb-share:server=rds.icr.ac.uk,share=data/DBI/DUDBI"
+        "/DYNCESYS/mvries/ResultsAlma/cellshape-cloud/"
+        "epoch=53-step=76356.ckpt",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
+    parser.add_argument(
+        "--is_pretrained_lightning",
+        default=True,
+        type=str2bool,
+        help="Is the pretrained model a lightning module?",
+    )
+
     parser.add_argument(
         "--gpus",
         default=1,
         type=int,
         help="The number of gpus to use for training.",
     )
+    parser.add_argument(
+        "--norm_std",
+        default=True,
+        type=str2bool,
+        help="Standardize by a factor of 20?",
+    )
+    parser.add_argument(
+        "--num_points",
+        default=2048,
+        type=int,
+        help="Enter the number of points in the point cloud",
+    )
 
-    args = parser.parse_args()
-    train_vae_pl(args)
+    arguments = parser.parse_args()
+    train_vae_pl(arguments)
