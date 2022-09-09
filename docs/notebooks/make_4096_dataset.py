@@ -118,47 +118,47 @@ def mesh_to_pc(mesh_directory, num_points, save_dir):
             cloud.to_file(save_to_points_path + file_name + ".ply")
 
 
-# Plate 1
-PATH_TO_SAVE_MESH = (
-    "/home/mvries/Documents/Datasets/OPM/"
-    "SingleCellFromNathan_17122021/Plate1/"
-    "stacked_off/raw/"
-)
-PATH_TO_SAVE_PC = (
-    "/home/mvries/Documents/Datasets/OPM/"
-    "SingleCellFromNathan_17122021/Plate1/"
-    "stacked_pointcloud_1024/"
-)
-NUM_POINTS = 1024
-
-mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
-
-
-# Plate 2
-PATH_TO_SAVE_MESH = (
-    "/home/mvries/Documents/Datasets/OPM/"
-    "SingleCellFromNathan_17122021/Plate2/"
-    "stacked_off/raw/"
-)
-PATH_TO_SAVE_PC = (
-    "/home/mvries/Documents/Datasets/OPM/"
-    "SingleCellFromNathan_17122021/Plate2/"
-    "stacked_pointcloud_1024/"
-)
-NUM_POINTS = 1024
-
-mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
+# # Plate 1
+# PATH_TO_SAVE_MESH = (
+#     "/home/mvries/Documents/Datasets/OPM/"
+#     "SingleCellFromNathan_17122021/Plate1/"
+#     "stacked_off_nucleus/raw/"
+# )
+# PATH_TO_SAVE_PC = (
+#     "/home/mvries/Documents/Datasets/OPM/"
+#     "SingleCellFromNathan_17122021/Plate1/"
+#     "stacked_pointcloud_nucleus_4096/"
+# )
+# NUM_POINTS = 4096
+#
+# mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
+#
+#
+# # Plate 2
+# PATH_TO_SAVE_MESH = (
+#     "/home/mvries/Documents/Datasets/OPM/"
+#     "SingleCellFromNathan_17122021/Plate2/"
+#     "stacked_off_nucleus/raw/"
+# )
+# PATH_TO_SAVE_PC = (
+#     "/home/mvries/Documents/Datasets/OPM/"
+#     "SingleCellFromNathan_17122021/Plate2/"
+#     "stacked_pointcloud_nucleus_4096/"
+# )
+# NUM_POINTS = 4096
+#
+# mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)
 
 # Plate 3
 PATH_TO_SAVE_MESH = (
     "/home/mvries/Documents/Datasets/OPM/"
-    "SingleCellFromNathan_17122021/Plate3/stacked_off/raw/"
+    "SingleCellFromNathan_17122021/Plate3/stacked_off_nucleus/raw/"
 )
 PATH_TO_SAVE_PC = (
     "/home/mvries/Documents/Datasets/OPM/"
     "SingleCellFromNathan_17122021/Plate3/"
-    "stacked_pointcloud_1024/"
+    "stacked_pointcloud_nucleus_4096/"
 )
-NUM_POINTS = 1024
+NUM_POINTS = 4096
 
 mesh_to_pc(PATH_TO_SAVE_MESH, NUM_POINTS, PATH_TO_SAVE_PC)

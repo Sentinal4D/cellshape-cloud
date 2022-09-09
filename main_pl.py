@@ -134,13 +134,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/" "VickyCellshape/",
+        default="/home/mvries/Documents/Datasets/ShapeAE_datasets"
+        "/RedBloodCell/pointcloud/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="GefGap",
+        default="Other",
         type=str,
         choices=["SingleCell", "GefGap", "Other"],
         help="Please provide the type of dataset. "
@@ -190,7 +191,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--learning_rate_autoencoder",
-        default=0.0000001,
+        default=0.0001,
         type=float,
         help="Please provide the learning rate "
         "for the autoencoder training.",
@@ -213,7 +214,7 @@ if __name__ == "__main__":
         default="/run/user/1128299809/gvfs"
         "/smb-share:server=rds.icr.ac.uk,share=data/DBI/DUDBI"
         "/DYNCESYS/mvries/ResultsAlma/cellshape-cloud/"
-        "epoch=53-step=76356.ckpt",
+        "epoch=248-step=352086.ckpt",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
@@ -238,7 +239,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--num_points",
-        default=4096,
+        default=2046,
         type=int,
         help="Enter the number of points in the point cloud",
     )
