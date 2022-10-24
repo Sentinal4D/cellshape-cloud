@@ -51,6 +51,7 @@ def train_vae_pl(args):
             args.dataframe_path,
             args.cloud_dataset_path,
             norm_std=args.norm_std,
+            cell_component=args.cell_component,
         )
 
     else:
@@ -134,14 +135,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/ShapeAE_datasets"
-        "/RedBloodCell/pointcloud/",
+        default="/home/mvries/Documents/Datasets/OPM/VickyPlates_010922/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="Other",
+        default="GefGap",
         type=str,
         choices=["SingleCell", "GefGap", "Other"],
         help="Please provide the type of dataset. "
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output_dir",
-        default="/home/mvries/Documents/Testing_output/",
+        default="/home/mvries/Documents/Testing_output_cloud/",
         type=str,
         help="Please provide the path for where to save output.",
     )
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--learning_rate_autoencoder",
-        default=0.0001,
+        default=0.00001,
         type=float,
         help="Please provide the learning rate "
         "for the autoencoder training.",
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--norm_std",
-        default=True,
+        default=False,
         type=str2bool,
         help="Standardize by a factor of 20?",
     )
@@ -241,6 +241,12 @@ if __name__ == "__main__":
         "--num_points",
         default=2046,
         type=int,
+        help="Enter the number of points in the point cloud",
+    )
+    parser.add_argument(
+        "--cell_component",
+        default="nuc",
+        type=str,
         help="Enter the number of points in the point cloud",
     )
 

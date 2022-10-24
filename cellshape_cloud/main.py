@@ -62,7 +62,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output_dir",
-        default="/home/mvries/Documents/Testing_output/",
+        default="/home/mvries/Documents/Testing_output_cloud/",
         type=str,
         help="Please provide the path for where to save output.",
     )

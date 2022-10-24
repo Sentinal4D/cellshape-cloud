@@ -148,10 +148,11 @@ class GefGapDataset(Dataset):
 
         image = torch.tensor(image)
         mean = torch.mean(image, 0)
-        if self.norm_std:
+        if self.norm_std == 1:
             std = torch.tensor([[20.0, 20.0, 20.0]])
         else:
             std = torch.tensor([4.2266, 13.5636, 14.1695])
+
         image = (image - mean) / std
 
         serial_number = self.new_df.loc[idx, "serialNumber"]
