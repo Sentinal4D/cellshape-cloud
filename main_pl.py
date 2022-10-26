@@ -9,6 +9,7 @@ from cellshape_cloud.pointcloud_dataset import (
     PointCloudDataset,
     SingleCellDataset,
     GefGapDataset,
+    ModelNet40,
 )
 from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
@@ -53,7 +54,8 @@ def train_vae_pl(args):
             norm_std=args.norm_std,
             cell_component=args.cell_component,
         )
-
+    elif args.dataset_type == "ModelNet":
+        dataset = ModelNet40(args.cloud_dataset_path)
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
 
@@ -135,15 +137,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/VickyPlates_010922/",
+        default="/run/user/1128299809/gvfs/smb-share:"
+        "server=rds.icr.ac.uk,share=data/"
+        "DBI/DUDBI/DYNCESYS/mvries/Datasets/ModelNet40/PoitntCloud_2048/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="GefGap",
+        default="ModelNet",
         type=str,
-        choices=["SingleCell", "GefGap", "Other"],
+        choices=["SingleCell", "GefGap", "Other", "ModelNet"],
         help="Please provide the type of dataset. "
         "If using the one from our paper, then choose 'SingleCell', "
         "otherwise, choose 'Other'.",
@@ -211,16 +215,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs"
-        "/smb-share:server=rds.icr.ac.uk,share=data/DBI/DUDBI"
-        "/DYNCESYS/mvries/ResultsAlma/cellshape-cloud/"
-        "epoch=248-step=352086.ckpt",
+        default="/home/mvries/Documents/GitHub/TearingNetNew"
+        "/nets/dgcnn_foldingnet_128_019.pt",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
     parser.add_argument(
         "--is_pretrained_lightning",
-        default=True,
+        default=False,
         type=str2bool,
         help="Is the pretrained model a lightning module?",
     )

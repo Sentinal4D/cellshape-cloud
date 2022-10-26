@@ -158,3 +158,26 @@ class GefGapDataset(Dataset):
         serial_number = self.new_df.loc[idx, "serialNumber"]
 
         return image, treatment, 0, serial_number
+
+
+class ModelNet40(Dataset):
+    def __init__(self, img_dir, train="train", transform=None):
+
+        self.img_dir = Path(img_dir)
+        self.train = train
+        self.transform = transform
+        self.files = list(self.img_dir.glob(f"**/{train}/*.ply"))
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, idx):
+        # read the image
+        file = self.files[idx]
+        image = PyntCloud.from_file(str(file))
+        label = str(file.name)[:-9]
+        image = (image.points.values - image.points.values.min()) / (
+            image.points.values.max() - image.points.values.min()
+        )
+
+        return image, label
