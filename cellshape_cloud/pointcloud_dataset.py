@@ -106,7 +106,7 @@ class GefGapDataset(Dataset):
         transform=None,
         target_transform=None,
         cell_component="cell",
-        norm_std=True,
+        norm_std=False,
     ):
         self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = img_dir
@@ -151,7 +151,7 @@ class GefGapDataset(Dataset):
         if self.norm_std:
             std = torch.tensor([[20.0, 20.0, 20.0]])
         else:
-            std = torch.tensor([4.2266, 13.5636, 14.1695])
+            std = torch.abs(image - mean).max() * 0.9999999
 
         image = (image - mean) / std
 
