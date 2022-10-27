@@ -133,16 +133,22 @@ class GefGapDataset(Dataset):
         plate = "Plate" + str(plate_num)
         if self.cell_component == "cell":
             component_path = "stacked_pointcloud"
+            img_path = os.path.join(
+                self.img_dir,
+                plate,
+                component_path,
+                self.new_df.loc[idx, "serialNumber"],
+            )
         else:
             component_path = "stacked_pointcloud_nucleus"
+            img_path = os.path.join(
+                self.img_dir,
+                plate,
+                component_path,
+                "Cells",
+                self.new_df.loc[idx, "serialNumber"],
+            )
 
-        img_path = os.path.join(
-            self.img_dir,
-            plate,
-            component_path,
-            "Cells",
-            self.new_df.loc[idx, "serialNumber"],
-        )
         image = PyntCloud.from_file(img_path + ".ply")
         image = image.points.values
 
