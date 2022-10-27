@@ -1,6 +1,6 @@
 import argparse
 
-from extract import extract
+from .extract import extract
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

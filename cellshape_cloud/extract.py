@@ -4,8 +4,8 @@ from torch.utils.data import DataLoader
 import numpy as np
 from pathlib import Path
 
-from cellshape_cloud.pointcloud_dataset import SingleCellDataset
-from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
+from .pointcloud_dataset import SingleCellDataset
+from .cloud_autoencoder import CloudAutoEncoder
 
 
 def extract(args):

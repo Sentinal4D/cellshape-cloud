@@ -1,7 +1,7 @@
 from torch import nn
 
-from vendor.encoders import FoldNetEncoder, DGCNNEncoder
-from vendor.decoders import FoldNetDecoder, FoldingNetBasicDecoder
+from .vendor.encoders import FoldNetEncoder, DGCNNEncoder
+from .vendor.decoders import FoldNetDecoder, FoldingNetBasicDecoder
 
 
 class CloudAutoEncoder(nn.Module):
