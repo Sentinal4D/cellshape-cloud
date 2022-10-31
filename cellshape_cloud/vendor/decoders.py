@@ -107,8 +107,10 @@ class FoldNetDecoder(nn.Module):
         self.std = std
         self.meshgrid = [[-std, std, 45], [-std, std, 45]]
         self.shape = shape
-        self.sphere = np.load(sphere_path)
-        self.gaussian = np.load(gaussian_path)
+        if shape == "sphere":
+            self.sphere = np.load(sphere_path)
+        if shape == "gaussian":
+            self.gaussian = np.load(gaussian_path)
         self.num_features = num_features
         if self.shape == "plane":
             self.folding1 = nn.Sequential(

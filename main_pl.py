@@ -300,7 +300,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--is_pretrained_shapenet",
         default=False,
-        type=str,
+        type=str2bool,
         help="Was trained on shapenet?",
     )
     parser.add_argument(
@@ -327,7 +327,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--std",
         default=0.3,
-        type=int,
+        type=float,
         help="Standard deviation of sampled points.",
     )
 
