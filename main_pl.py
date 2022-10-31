@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import DataLoader
 import argparse
 import pytorch_lightning as pl
@@ -24,21 +25,49 @@ def train_vae_pl(args):
         k=args.k,
         encoder_type=args.encoder_type,
         decoder_type=args.decoder_type,
+        shape=args.shape,
+        sphere_path=args.sphere_path,
+        gaussian_path=args.gaussian_path,
+        std=args.std,
     )
     autoencoder = CloudAutoEncoderPL(args=args, model=model)
 
-    if args.is_pretrained_lightning:
-        try:
-            autoencoder.load_lightning(args.pretrained_path)
+    if args.is_pretrained_shapenet:
+        checkpoint = torch.load(
+            args.pretrained_path, map_location=lambda storage, loc: storage
+        )
+        # "load encoder"
+        model_dict = autoencoder.state_dict()
+        for k in checkpoint:
+            if k in model_dict:
+                model_dict[k] = checkpoint[k]
+                print("    Found weight: " + k)
+            elif k.replace("encoder.", "model.encoder.") in model_dict:
+                model_dict[
+                    k.replace("encoder.", "model.encoder.")
+                ] = checkpoint[k]
+                print("    Found weight: " + k)
+            elif k.replace("decoder.", "model.decoder.") in model_dict:
+                model_dict[
+                    k.replace("decoder.", "model.decoder.")
+                ] = checkpoint[k]
+                print("    Found weight: " + k)
 
-        except Exception as e:
-            print(f"Cannot load model due to error {e}.")
+        autoencoder.load_state_dict(model_dict)
 
     else:
-        try:
-            autoencoder.load_model(args.pretrained_path)
-        except Exception as e:
-            print(f"Can't load pretrained network due to error {e}.")
+        if args.is_pretrained_lightning:
+            try:
+                autoencoder.load_lightning(args.pretrained_path)
+
+            except Exception as e:
+                print(f"Cannot load model due to error {e}.")
+
+        else:
+            try:
+                autoencoder.load_model(args.pretrained_path)
+            except Exception as e:
+                print(f"Can't load pretrained network due to error {e}.")
 
     if args.dataset_type == "SingleCell":
         dataset = SingleCellDataset(
@@ -137,9 +166,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/run/user/1128299809/gvfs/smb-share:"
-        "server=rds.icr.ac.uk,share=data/"
-        "DBI/DUDBI/DYNCESYS/mvries/Datasets/ModelNet40/PoitntCloud_2048/",
+        default="/run/user/1128299809/gvfs/smb-share:server=rds.icr.ac.uk,"
+        "share=data/DBI/DUDBI/DYNCESYS/mvries/Datasets/"
+        "ModelNet40/PointCloud_2048",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
@@ -189,7 +218,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--decoder_type",
-        default="foldingnetbasic",
+        default="foldingnet",
         type=str,
         help="Please provide the type of decoder.",
     )
@@ -215,8 +244,10 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/home/mvries/Documents/GitHub/TearingNetNew"
-        "/nets/dgcnn_foldingnet_128_019.pt",
+        default="/run/user/1128299809/gvfs/smb-share:server=rds.icr.ac.uk,"
+        "share=data/DBI/DUDBI/DYNCESYS/mvries/Projects/"
+        "TearingNetNew/Reconstruct_dgcnn_cls_k20_plane/"
+        "models/shapenetcorev2_250.pkl",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
@@ -250,6 +281,33 @@ if __name__ == "__main__":
         default="nuc",
         type=str,
         help="Enter the number of points in the point cloud",
+    )
+    parser.add_argument(
+        "--is_pretrained_shapenet",
+        default=True,
+        type=str,
+        help="Was trained on shapenet?",
+    )
+    parser.add_argument(
+        "--shape",
+        default="sphere",
+        choices=["sphere", "plane", "gaussian", "ModelNet"],
+        type=str,
+        help="What shape of points to concatenate features to?",
+    )
+    parser.add_argument(
+        "--sphere_path",
+        default="/home/mvries/Documents/GitHub/"
+        "cellshape-cloud/cellshape_cloud/vendor/sphere.npy",
+        type=str,
+        help="Path to sphere.",
+    )
+    parser.add_argument(
+        "--gaussian_path",
+        default="/home/mvries/Documents/GitHub/"
+        "cellshape-cloud/cellshape_cloud/vendor/gaussian.npy",
+        type=str,
+        help="Path to gaussian shape.",
     )
 
     arguments = parser.parse_args()

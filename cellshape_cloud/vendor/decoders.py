@@ -53,6 +53,7 @@ class FoldingNetBasicDecoder(nn.Module):
         shape="plane",
         sphere_path="./sphere.npy",
         gaussian_path="./gaussian.npy",
+        std=0.3,
     ):
         super(FoldingNetBasicDecoder, self).__init__()
 
@@ -66,8 +67,8 @@ class FoldingNetBasicDecoder(nn.Module):
 
         if shape == "plane":
             # make grid
-            range_x = torch.linspace(-3.0, 3.0, 45)
-            range_y = torch.linspace(-3.0, 3.0, 45)
+            range_x = torch.linspace(-std, std, 45)
+            range_y = torch.linspace(-std, std, 45)
             x_coor, y_coor = torch.meshgrid(range_x, range_y, indexing="ij")
             self.grid = (
                 torch.stack([x_coor, y_coor], axis=-1).float().reshape(-1, 2)
@@ -93,18 +94,38 @@ class FoldingNetBasicDecoder(nn.Module):
 
 
 class FoldNetDecoder(nn.Module):
-    def __init__(self, num_features):
+    def __init__(
+        self,
+        num_features,
+        shape="plane",
+        sphere_path="./sphere.npy",
+        gaussian_path="./gaussian.npy",
+        std=0.3,
+    ):
         super(FoldNetDecoder, self).__init__()
         self.m = 2025  # 45 * 45.
-        self.meshgrid = [[-3, 3, 45], [-3, 3, 45]]
+        self.std = std
+        self.meshgrid = [[-std, std, 45], [-std, std, 45]]
+        self.shape = shape
+        self.sphere = np.load(sphere_path)
+        self.gaussian = np.load(gaussian_path)
         self.num_features = num_features
-        self.folding1 = nn.Sequential(
-            nn.Conv1d(512 + 2, 512, 1),
-            nn.ReLU(),
-            nn.Conv1d(512, 512, 1),
-            nn.ReLU(),
-            nn.Conv1d(512, 3, 1),
-        )
+        if self.shape == "plane":
+            self.folding1 = nn.Sequential(
+                nn.Conv1d(512 + 2, 512, 1),
+                nn.ReLU(),
+                nn.Conv1d(512, 512, 1),
+                nn.ReLU(),
+                nn.Conv1d(512, 3, 1),
+            )
+        else:
+            self.folding1 = nn.Sequential(
+                nn.Conv1d(512 + 3, 512, 1),
+                nn.ReLU(),
+                nn.Conv1d(512, 512, 1),
+                nn.ReLU(),
+                nn.Conv1d(512, 3, 1),
+            )
 
         self.folding2 = nn.Sequential(
             nn.Conv1d(512 + 3, 512, 1),
@@ -121,9 +142,15 @@ class FoldNetDecoder(nn.Module):
             )
 
     def build_grid(self, batch_size):
-        x = np.linspace(*self.meshgrid[0])
-        y = np.linspace(*self.meshgrid[1])
-        points = np.array(list(itertools.product(x, y)))
+        if self.shape == "plane":
+            x = np.linspace(*self.meshgrid[0])
+            y = np.linspace(*self.meshgrid[1])
+            points = np.array(list(itertools.product(x, y)))
+        elif self.shape == "sphere":
+            points = self.sphere
+        elif self.shape == "gaussian":
+            points = self.gaussian
+
         points = np.repeat(points[np.newaxis, ...], repeats=batch_size, axis=0)
         points = torch.tensor(points)
         return points.float()

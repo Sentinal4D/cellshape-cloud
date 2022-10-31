@@ -59,6 +59,29 @@ class CloudAutoEncoderPL(pl.LightningModule):
         )
         self.load_state_dict(checkpoint["state_dict"])
 
+    def load_shapenet(self, path):
+        checkpoint = torch.load(
+            path, map_location=lambda storage, loc: storage
+        )
+        # "load encoder"
+        model_dict = self.model.state_dict()
+        for k in checkpoint:
+            if k in model_dict:
+                model_dict[k] = checkpoint[k]
+                print("    Found weight: " + k)
+            elif k.replace("encoder.", "model.encoder.") in model_dict:
+                model_dict[
+                    k.replace("encoder.", "model.encoder.")
+                ] = checkpoint[k]
+                print("    Found weight: " + k)
+            elif k.replace("decoder.", "model.decoder.") in model_dict:
+                model_dict[
+                    k.replace("decoder.", "model.decoder.")
+                ] = checkpoint[k]
+                print("    Found weight: " + k)
+
+        self.model.load_state_dict(model_dict)
+
     def training_step(self, batch, batch_idx):
         inputs = batch[0]
         outputs, features = self.model(inputs)

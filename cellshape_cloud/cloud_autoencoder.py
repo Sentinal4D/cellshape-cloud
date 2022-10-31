@@ -11,10 +11,19 @@ class CloudAutoEncoder(nn.Module):
         k=20,
         encoder_type="dgcnn",
         decoder_type="foldingnet",
+        shape="plane",
+        sphere_path="./sphere.npy",
+        gaussian_path="./gaussian.npy",
+        std=0.3,
     ):
         super(CloudAutoEncoder, self).__init__()
         self.k = k
         self.num_features = num_features
+        self.shape = shape
+        self.sphere_path = sphere_path
+        self.gaussian_path = gaussian_path
+        self.std = std
+
         assert encoder_type.lower() in [
             "foldingnet",
             "dgcnn",
@@ -37,10 +46,20 @@ class CloudAutoEncoder(nn.Module):
             )
 
         if self.decoder_type == "foldingnet":
-            self.decoder = FoldNetDecoder(num_features=self.num_features)
+            self.decoder = FoldNetDecoder(
+                num_features=self.num_features,
+                shape=self.shape,
+                sphere_path=self.sphere_path,
+                gaussian_path=self.gaussian_path,
+                std=self.std,
+            )
         else:
             self.decoder = FoldingNetBasicDecoder(
-                num_features=self.num_features
+                num_features=self.num_features,
+                shape=self.shape,
+                sphere_path=self.sphere_path,
+                gaussian_path=self.gaussian_path,
+                std=self.std,
             )
 
     def forward(self, x):
