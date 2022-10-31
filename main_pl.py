@@ -91,7 +91,13 @@ def train_vae_pl(args):
     elif args.dataset_type == "ModelNet":
         dataset = ModelNet40(args.cloud_dataset_path)
     elif args.dataset_type == "ShapeNet":
-        dataset = ShapeNetDataset(args.cloud_dataset_path, "shapenetcorev2")
+        dataset = ShapeNetDataset(
+            root=args.cloud_dataset_path,
+            dataset_name="shapenetcorev2",
+            random_rotate=True,
+            random_jitter=True,
+            random_translate=True,
+        )
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
 
