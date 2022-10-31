@@ -11,6 +11,7 @@ from cellshape_cloud.pointcloud_dataset import (
     SingleCellDataset,
     GefGapDataset,
     ModelNet40,
+    ShapeNetDataset,
 )
 from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
@@ -85,6 +86,8 @@ def train_vae_pl(args):
         )
     elif args.dataset_type == "ModelNet":
         dataset = ModelNet40(args.cloud_dataset_path)
+    elif args.dataset_type == "ShapeNet":
+        dataset = ShapeNetDataset(args.cloud_dataset_path, "shapenetcorev2")
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
 
@@ -176,7 +179,7 @@ if __name__ == "__main__":
         "--dataset_type",
         default="ModelNet",
         type=str,
-        choices=["SingleCell", "GefGap", "Other", "ModelNet"],
+        choices=["SingleCell", "GefGap", "Other", "ModelNet", "ShapeNet"],
         help="Please provide the type of dataset. "
         "If using the one from our paper, then choose 'SingleCell', "
         "otherwise, choose 'Other'.",
@@ -308,6 +311,12 @@ if __name__ == "__main__":
         "cellshape-cloud/cellshape_cloud/vendor/gaussian.npy",
         type=str,
         help="Path to gaussian shape.",
+    )
+    parser.add_argument(
+        "--std",
+        default=0.3,
+        type=int,
+        help="Standard deviation of sampled points.",
     )
 
     arguments = parser.parse_args()
