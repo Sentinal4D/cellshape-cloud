@@ -109,7 +109,9 @@ def train_vae_pl(args):
         model=autoencoder.model, output_dir=args.output_dir
     )
 
-    checkpoint_callback = ModelCheckpoint(save_top_k=1, monitor="loss")
+    checkpoint_callback = ModelCheckpoint(
+        save_top_k=1, monitor="loss", every_n_epochs=1, save_last=True
+    )
 
     trainer = pl.Trainer(
         accelerator="gpu",
