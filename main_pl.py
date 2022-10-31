@@ -34,27 +34,31 @@ def train_vae_pl(args):
     autoencoder = CloudAutoEncoderPL(args=args, model=model)
 
     if args.is_pretrained_shapenet:
-        checkpoint = torch.load(
-            args.pretrained_path, map_location=lambda storage, loc: storage
-        )
-        # "load encoder"
-        model_dict = autoencoder.state_dict()
-        for k in checkpoint:
-            if k in model_dict:
-                model_dict[k] = checkpoint[k]
-                print("    Found weight: " + k)
-            elif k.replace("encoder.", "model.encoder.") in model_dict:
-                model_dict[
-                    k.replace("encoder.", "model.encoder.")
-                ] = checkpoint[k]
-                print("    Found weight: " + k)
-            elif k.replace("decoder.", "model.decoder.") in model_dict:
-                model_dict[
-                    k.replace("decoder.", "model.decoder.")
-                ] = checkpoint[k]
-                print("    Found weight: " + k)
+        try:
+            checkpoint = torch.load(
+                args.pretrained_path, map_location=lambda storage, loc: storage
+            )
+            # "load encoder"
+            model_dict = autoencoder.state_dict()
+            for k in checkpoint:
+                if k in model_dict:
+                    model_dict[k] = checkpoint[k]
+                    print("    Found weight: " + k)
+                elif k.replace("encoder.", "model.encoder.") in model_dict:
+                    model_dict[
+                        k.replace("encoder.", "model.encoder.")
+                    ] = checkpoint[k]
+                    print("    Found weight: " + k)
+                elif k.replace("decoder.", "model.decoder.") in model_dict:
+                    model_dict[
+                        k.replace("decoder.", "model.decoder.")
+                    ] = checkpoint[k]
+                    print("    Found weight: " + k)
 
-        autoencoder.load_state_dict(model_dict)
+            autoencoder.load_state_dict(model_dict)
+
+        except Exception as e:
+            print(f"Cannot load model due to error {e}.")
 
     else:
         if args.is_pretrained_lightning:
@@ -287,7 +291,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--is_pretrained_shapenet",
-        default=True,
+        default=False,
         type=str,
         help="Was trained on shapenet?",
     )
