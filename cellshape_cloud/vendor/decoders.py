@@ -47,7 +47,13 @@ class FoldingModule(nn.Module):
 
 
 class FoldingNetBasicDecoder(nn.Module):
-    def __init__(self, num_features):
+    def __init__(
+        self,
+        num_features,
+        shape="plane",
+        sphere_path="./sphere.npy",
+        gaussian_path="./gaussian.npy",
+    ):
         super(FoldingNetBasicDecoder, self).__init__()
 
         # initialise deembedding
@@ -58,13 +64,18 @@ class FoldingNetBasicDecoder(nn.Module):
                 self.num_features, self.lin_features_len, bias=False
             )
 
-        # make grid
-        range_x = torch.linspace(-3.0, 3.0, 45)
-        range_y = torch.linspace(-3.0, 3.0, 45)
-        x_coor, y_coor = torch.meshgrid(range_x, range_y, indexing="ij")
-        self.grid = (
-            torch.stack([x_coor, y_coor], axis=-1).float().reshape(-1, 2)
-        )
+        if shape == "plane":
+            # make grid
+            range_x = torch.linspace(-3.0, 3.0, 45)
+            range_y = torch.linspace(-3.0, 3.0, 45)
+            x_coor, y_coor = torch.meshgrid(range_x, range_y, indexing="ij")
+            self.grid = (
+                torch.stack([x_coor, y_coor], axis=-1).float().reshape(-1, 2)
+            )
+        elif shape == "sphere":
+            self.grid = torch.tensor(np.load(sphere_path))
+        elif self.shape == "gaussian":
+            self.grid = torch.tensor(np.load(gaussian_path))
 
         # initialise folding module
         self.folding = FoldingModule()
