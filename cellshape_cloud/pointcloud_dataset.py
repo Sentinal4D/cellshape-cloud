@@ -360,6 +360,7 @@ class OPMDataset(Dataset):
             (self.annot_df.xDim <= self.img_size)
             & (self.annot_df.yDim <= self.img_size)
             & (self.annot_df.zDim <= self.img_size)
+            & (self.annot_df.Proximal == 1)
         ].reset_index(drop=True)
 
     def __len__(self):

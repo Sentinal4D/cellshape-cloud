@@ -12,6 +12,7 @@ from cellshape_cloud.pointcloud_dataset import (
     GefGapDataset,
     ModelNet40,
     ShapeNetDataset,
+    OPMDataset,
 )
 from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
@@ -97,6 +98,15 @@ def train_vae_pl(args):
             random_rotate=True,
             random_jitter=True,
             random_translate=True,
+        )
+    elif args.dataset_type == "OPM":
+        dataset = OPMDataset(
+            args.dataframe_path,
+            args.cloud_dataset_path,
+            norm_std=args.norm_std,
+            cell_component=args.cell_component,
+            single_path=args.single_path,
+            gef_path=args.gef_path,
         )
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
@@ -189,9 +199,16 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataset_type",
-        default="ModelNet",
+        default="OPM",
         type=str,
-        choices=["SingleCell", "GefGap", "Other", "ModelNet", "ShapeNet"],
+        choices=[
+            "SingleCell",
+            "GefGap",
+            "Other",
+            "ModelNet",
+            "ShapeNet",
+            "OPM",
+        ],
         help="Please provide the type of dataset. "
         "If using the one from our paper, then choose 'SingleCell', "
         "otherwise, choose 'Other'.",
@@ -327,6 +344,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "--std",
         default=0.3,
+        type=float,
+        help="Standard deviation of sampled points.",
+    )
+    parser.add_argument(
+        "--single_path",
+        default="./",
+        type=float,
+        help="Standard deviation of sampled points.",
+    )
+    parser.add_argument(
+        "--gef_path",
+        default="./",
         type=float,
         help="Standard deviation of sampled points.",
     )
