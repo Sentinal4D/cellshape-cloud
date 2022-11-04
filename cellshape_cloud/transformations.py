@@ -92,3 +92,16 @@ class AxisRotationTransform:
         rot_matrix = self.compute_rot_matrix(phi, shuffle=True)
 
         return tensor @ rot_matrix.T
+
+
+class Jitter:
+    def __init__(self, sigma=0.01, clip=0.02):
+        self.sigma = sigma
+        self.clip = clip
+
+    def __call__(self, tensor):
+        N, C = tensor.shape
+        tensor += np.clip(
+            self.sigma * np.random.randn(N, C), -1 * self.clip, self.clip
+        )
+        return tensor
