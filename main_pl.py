@@ -250,7 +250,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--decoder_type",
-        default="foldingnet",
+        default="foldingnetbasic",
         type=str,
         help="Please provide the type of decoder.",
     )
