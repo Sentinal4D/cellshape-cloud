@@ -350,13 +350,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--single_path",
         default="./",
-        type=float,
+        type=str,
         help="Standard deviation of sampled points.",
     )
     parser.add_argument(
         "--gef_path",
         default="./",
-        type=float,
+        type=str,
         help="Standard deviation of sampled points.",
     )
 
