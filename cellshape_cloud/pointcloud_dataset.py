@@ -371,7 +371,6 @@ class OPMDataset(Dataset):
         plate_num = self.new_df.loc[idx, "PlateNumber"]
         treatment = self.new_df.loc[idx, "Treatment"]
         plate = "Plate" + str(plate_num)
-        print(treatment)
 
         if "accelerator" in self.new_df.loc[idx, "serialNumber"]:
             dat_type_path = self.single_path
