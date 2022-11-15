@@ -83,7 +83,7 @@ class CloudAutoEncoderPL(pl.LightningModule):
         self.model.load_state_dict(model_dict)
 
     def training_step(self, batch, batch_idx):
-        inputs = batch[0]
+        inputs = batch[2]
         outputs, features = self.model(inputs)
 
         loss = self.criterion(inputs, outputs)

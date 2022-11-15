@@ -285,7 +285,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--is_pretrained_lightning",
-        default=False,
+        default=True,
         type=str2bool,
         help="Is the pretrained model a lightning module?",
     )
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--norm_std",
-        default=False,
+        default=True,
         type=str2bool,
         help="Standardize by a factor of 20?",
     )
@@ -322,7 +322,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--shape",
-        default="sphere",
+        default="plane",
         choices=["sphere", "plane", "gaussian", "ModelNet"],
         type=str,
         help="What shape of points to concatenate features to?",
@@ -343,7 +343,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--std",
-        default=0.3,
+        default=3.0,
         type=float,
         help="Standard deviation of sampled points.",
     )

@@ -420,7 +420,7 @@ class OPMDataset(Dataset):
         if self.norm_std:
             std = torch.tensor([[20.0, 20.0, 20.0]])
         else:
-            std = torch.abs(image - mean).max() * 0.9999999
+            std = torch.std(image, 0)
 
         image = (image - mean) / std
         pc = PCA(n_components=3)
