@@ -13,6 +13,7 @@ from cellshape_cloud.pointcloud_dataset import (
     ModelNet40,
     ShapeNetDataset,
     OPMDataset,
+    VesselMNIST3D,
 )
 from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
@@ -108,6 +109,8 @@ def train_vae_pl(args):
             single_path=args.single_path,
             gef_path=args.gef_path,
         )
+    elif args.dataset_type == "VesselMNIST":
+        dataset = VesselMNIST3D(args.cloud_dataset_path)
     else:
         dataset = PointCloudDataset(args.cloud_dataset_path)
 
@@ -191,15 +194,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/run/user/1128299809/gvfs/smb-share:server=rds.icr.ac.uk,"
-        "share=data/DBI/DUDBI/DYNCESYS/mvries/Datasets/"
-        "ModelNet40/PointCloud_2048",
+        default="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="OPM",
+        default="VesselMNIST",
         type=str,
         choices=[
             "SingleCell",
@@ -208,6 +209,7 @@ if __name__ == "__main__":
             "ModelNet",
             "ShapeNet",
             "OPM",
+            "VesselMNIST",
         ],
         help="Please provide the type of dataset. "
         "If using the one from our paper, then choose 'SingleCell', "
@@ -256,7 +258,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--learning_rate_autoencoder",
-        default=0.00001,
+        default=0.0001,
         type=float,
         help="Please provide the learning rate "
         "for the autoencoder training.",
@@ -276,10 +278,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs/smb-share:server=rds.icr.ac.uk,"
-        "share=data/DBI/DUDBI/DYNCESYS/mvries/Projects/"
-        "TearingNetNew/Reconstruct_dgcnn_cls_k20_plane/"
-        "models/shapenetcorev2_250.pkl",
+        default=None,
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )

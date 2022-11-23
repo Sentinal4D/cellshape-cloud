@@ -429,3 +429,38 @@ class OPMDataset(Dataset):
         serial_number = self.new_df.loc[idx, "serialNumber"]
 
         return image, treatment, u, serial_number
+
+
+class VesselMNIST3D(Dataset):
+    def __init__(self, points_dir, centre=True, scale=20.0, partition="train"):
+        self.points_dir = points_dir
+        self.centre = centre
+        self.scale = scale
+        self.p = Path(self.points_dir)
+        self.partiftion = partition
+        self.path = self.p / partition
+        self.files = list(self.path.glob("**/*.ply"))
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, idx):
+        # read the image
+        file = self.files[idx]
+        point_cloud = PyntCloud.from_file(str(file))
+        mean = 0
+        point_cloud = torch.tensor(point_cloud.points.values)
+        if self.centre:
+            mean = torch.mean(point_cloud, 0)
+
+        scale = torch.tensor([[self.scale, self.scale, self.scale]])
+        point_cloud = (point_cloud - mean) / scale
+        pc = PCA(n_components=3)
+        u = torch.tensor(pc.fit_transform(point_cloud.numpy()))
+
+        return (
+            point_cloud,
+            file.parents[0].name.replace("_pointcloud", ""),
+            u,
+            0,
+        )
