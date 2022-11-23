@@ -1,6 +1,6 @@
 from torch import nn
 
-from .vendor.encoders import FoldNetEncoder, DGCNNEncoder, DGCNN
+from .vendor.encoders import FoldNetEncoder, DGCNNEncoder
 from .vendor.decoders import FoldNetDecoder, FoldingNetBasicDecoder
 
 
@@ -41,8 +41,8 @@ class CloudAutoEncoder(nn.Module):
             self.encoder = DGCNNEncoder(
                 num_features=self.num_features, k=self.k
             )
-        elif self.encoder_type == "dgcnn_orig":
-            self.encoder = DGCNN(num_features=self.num_features, k=self.k)
+        # elif self.encoder_type == "dgcnn_orig":
+        #     self.encoder = DGCNN(num_features=self.num_features, k=self.k)
         else:
             self.encoder = FoldNetEncoder(
                 num_features=self.num_features, k=self.k
