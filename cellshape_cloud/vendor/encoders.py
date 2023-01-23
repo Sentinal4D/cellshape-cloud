@@ -165,7 +165,7 @@ class FoldNetEncoder(nn.Module):
 
 
 class DGCNN(nn.Module):
-    def __init__(self, num_features=128, k=20, emb_dims=512):
+    def __init__(self, num_features=2, k=20, emb_dims=512):
         super(DGCNN, self).__init__()
         self.num_features = num_features
         self.k = k
