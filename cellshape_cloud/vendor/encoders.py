@@ -175,6 +175,7 @@ class DGCNN(nn.Module):
         self.bn3 = nn.BatchNorm2d(128)
         self.bn4 = nn.BatchNorm2d(256)
         self.bn5 = nn.BatchNorm1d(self.emb_dims)
+        self.dropout = 0.2
 
         self.conv1 = nn.Sequential(
             nn.Conv2d(6, 64, kernel_size=1, bias=False),

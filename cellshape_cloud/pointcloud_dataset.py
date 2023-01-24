@@ -9,7 +9,8 @@ import h5py
 from glob import glob
 import numpy as np
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import LabelEncoder
+
+from sklearn import preprocessing
 
 
 class PointCloudDataset(Dataset):
@@ -433,15 +434,20 @@ class OPMDataset(Dataset):
 
 
 class VesselMNIST3D(Dataset):
-
     def __init__(self, points_dir, centre=True, scale=20.0, partition="train"):
         self.points_dir = points_dir
         self.centre = centre
         self.scale = scale
         self.p = Path(self.points_dir)
-        self.partiftion = partition
+        self.partition = partition
         self.path = self.p / partition
         self.files = list(self.path.glob("**/*.ply"))
+        self.classes = [
+            x.parents[0].name.replace("_pointcloud", "") for x in self.files
+        ]
+
+        self.le = preprocessing.LabelEncoder()
+        self.class_labels = self.le.fit_transform(self.classes)
 
     def __len__(self):
         return len(self.files)
@@ -449,6 +455,8 @@ class VesselMNIST3D(Dataset):
     def __getitem__(self, idx):
         # read the image
         file = self.files[idx]
+        label = self.class_labels[idx]
+        class_name = self.classes[idx]
         point_cloud = PyntCloud.from_file(str(file))
         mean = 0
         point_cloud = torch.tensor(point_cloud.points.values)
@@ -462,7 +470,7 @@ class VesselMNIST3D(Dataset):
 
         return (
             point_cloud,
-            torch.tensor(file.parents[0].name.replace("_pointcloud", "")),
+            torch.tensor(label, dtype=torch.int64),
             u,
-            0,
+            class_name,
         )

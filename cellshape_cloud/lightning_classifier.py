@@ -2,46 +2,67 @@ import torch
 from torch import nn
 
 import pytorch_lightning as pl
-from torchmetrics import Accuracy
-from .pointcloud_dataset import VesselMNIST3D
+from torchmetrics import Accuracy, AUROC
+from pointcloud_dataset import VesselMNIST3D
 from torch.utils.data import DataLoader
 
-from .vendor.encoders import DGCNN
+from vendor.encoders import DGCNNEncoder
+
 
 class VesselDataModule(pl.LightningDataModule):
-    """ Cassava DataModule for Lightning """
-    def __init__(self,transform=None, batch_size=32,
-                 points_dir="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/"):
+    """Cassava DataModule for Lightning"""
+
+    def __init__(
+        self,
+        transform=None,
+        batch_size=32,
+        points_dir="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/",
+    ):
         super().__init__()
         self.batch_size = batch_size
         self.transform = transform
         self.points_dir = points_dir
 
     def setup(self, stage=None):
-        self.vessel_train = VesselMNIST3D(self.points_dir, centre=True, scale=20.0, partition="train")
-        self.vessel_val = VesselMNIST3D(self.points_dir, centre=True, scale=20.0, partition="val")
-        self.vessel_test = VesselMNIST3D(self.points_dir, centre=True, scale=20.0, partition="test")
+        self.vessel_train = VesselMNIST3D(
+            self.points_dir, centre=True, scale=20.0, partition="train"
+        )
+        self.vessel_val = VesselMNIST3D(
+            self.points_dir, centre=True, scale=20.0, partition="val"
+        )
+        self.vessel_test = VesselMNIST3D(
+            self.points_dir, centre=True, scale=20.0, partition="test"
+        )
 
     def train_dataloader(self):
-        return DataLoader(self.vessel_train, batch_size=16)
+        return DataLoader(self.vessel_train, batch_size=self.batch_size)
 
     def val_dataloader(self):
-        return DataLoader(self.vessel_val, batch_size=16)
+        return DataLoader(self.vessel_val, batch_size=self.batch_size)
 
     def test_dataloader(self):
-        return DataLoader(self.vessel_test, batch_size=16)
+        return DataLoader(self.vessel_test, batch_size=self.batch_size)
 
 
 class CloudClassifierPL(pl.LightningModule):
-    def __init__(self, criterion=nn.CrossEntropyLoss(), num_classes=9):
+    def __init__(self, criterion=nn.BCEWithLogitsLoss(), num_classes=2):
         super(CloudClassifierPL, self).__init__()
 
         self.save_hyperparameters(ignore=["criterion", "model"])
         self.lr = 0.00001
         self.criterion = criterion
-        self.model = DGCNN()
+        self.model = DGCNNEncoder(num_features=1)
         self.num_classes = num_classes
-        self.accuracy = Accuracy(task="binary", num_classes=2, average='macro')
+        self.accuracy_macro = Accuracy(
+            task="binary", num_classes=2, average="macro"
+        )
+        self.accuracy_micro = Accuracy(
+            task="binary", num_classes=2, average="micro"
+        )
+        self.accuracy_weighted = Accuracy(
+            task="binary", num_classes=2, average="weighted"
+        )
+        self.AUC = AUROC(task="binary")
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(
@@ -105,31 +126,87 @@ class CloudClassifierPL(pl.LightningModule):
         self.model.load_state_dict(model_dict)
 
     def training_step(self, batch, batch_idx):
-        inputs, labels = batch[2]
-        outputs, features = self.model(inputs)
+        inputs, labels = batch[0], batch[1]
+        outputs = self.model(inputs)
 
-        loss = self.criterion(labels, outputs)
-        preds = torch.argmax(outputs, dim=1)
-        acc = self.accuracy(preds, labels)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, logger=True)
-        self.log('train_acc', acc, on_step=True, on_epoch=True, logger=True)
-        return loss
-
+        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
+        preds = torch.sigmoid(outputs) > 0.5
+        acc = self.accuracy(torch.squeeze(preds), labels)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, logger=True)
+        self.log(
+            "train_acc",
+            acc,
+            on_step=True,
+            on_epoch=True,
+            logger=True,
+            prog_bar=True,
+        )
+        dic = {"loss": loss, "acc": acc}
+        return dic
 
     def validation_step(self, batch, batch_idx):
-        inputs, labels = batch[2]
-        outputs, features = self.model(inputs)
+        inputs, labels = batch[0], batch[1]
+        outputs = self.model(inputs)
 
-        loss = self.criterion(labels, outputs)
+        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
         preds = torch.argmax(outputs, dim=1)
         acc = self.accuracy(preds, labels)
-        self.log('val_loss', loss, on_step=True, on_epoch=True, logger=True)
-        self.log('val_acc', acc, on_step=True, on_epoch=True, logger=True)
+        self.log("val_loss", loss, on_step=True, on_epoch=True, logger=True)
+        self.log("val_acc", acc, on_step=True, on_epoch=True, logger=True)
+
+    def test_step(self, batch, batch_idx):
+        inputs, labels = batch[0], batch[1]
+        outputs = self.model(inputs)
+
+        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
+        preds = torch.sigmoid(outputs) > 0.5
+        print(preds)
+
+        acc_macro = self.accuracy_macro(torch.squeeze(preds), labels)
+        acc_micro = self.accuracy_micro(torch.squeeze(preds), labels)
+        acc_weighted = self.accuracy_weighted(torch.squeeze(preds), labels)
+        auc = self.AUC(torch.squeeze(torch.sigmoid(outputs)), labels)
+        print(torch.squeeze(torch.sigmoid(outputs)))
+        self.log("test_loss", loss, on_step=True, on_epoch=True, logger=True)
+        self.log(
+            "test_acc_macro",
+            acc_macro,
+            on_step=True,
+            on_epoch=True,
+            logger=True,
+        )
+        self.log(
+            "test_acc_micro",
+            acc_micro,
+            on_step=True,
+            on_epoch=True,
+            logger=True,
+        )
+        self.log(
+            "test_acc_weighted",
+            acc_weighted,
+            on_step=True,
+            on_epoch=True,
+            logger=True,
+        )
+        self.log("test_auc", auc, on_step=True, on_epoch=True, logger=True)
 
 
 if __name__ == "__main__":
-    model = CloudClassifierPL()
+    import warnings
+    from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+
+    warnings.simplefilter("ignore", UserWarning)
+    model = CloudClassifierPL().load_from_checkpoint(
+        checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
+        "lightning_logs/version_29/checkpoints/epoch=238-step=10038.ckpt",
+        # hparams_file="/home/mvries/Documents/GitHub/cellshape-cloud/lightning_logs/version_29/hparams.yaml",
+        map_location="cuda",
+    )
     vessel_data = VesselDataModule()
     vessel_data.setup()
-    trainer = pl.Trainer(gpus=1)
+    trainer = pl.Trainer(
+        gpus=1, callbacks=[EarlyStopping(monitor="val_loss", mode="min")]
+    )
     trainer.fit(model, vessel_data)
+    trainer.test(model=model, datamodule=vessel_data)
