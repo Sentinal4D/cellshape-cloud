@@ -221,8 +221,7 @@ if __name__ == "__main__":
 
     vessel_data = VesselDataModule()
     vessel_data.setup()
-    trainer = pl.Trainer(
-        gpus=1, callbacks=[MyEarlyStopping(monitor="val_loss", mode="min")]
-    )
+    trainer = pl.Trainer(gpus=1)
+
     trainer.fit(model, vessel_data)
     trainer.test(model=model, datamodule=vessel_data)
