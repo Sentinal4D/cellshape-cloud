@@ -9,6 +9,7 @@ import h5py
 from glob import glob
 import numpy as np
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import LabelEncoder
 
 
 class PointCloudDataset(Dataset):
@@ -432,6 +433,7 @@ class OPMDataset(Dataset):
 
 
 class VesselMNIST3D(Dataset):
+
     def __init__(self, points_dir, centre=True, scale=20.0, partition="train"):
         self.points_dir = points_dir
         self.centre = centre
@@ -460,7 +462,7 @@ class VesselMNIST3D(Dataset):
 
         return (
             point_cloud,
-            file.parents[0].name.replace("_pointcloud", ""),
+            torch.tensor(file.parents[0].name.replace("_pointcloud", "")),
             u,
             0,
         )
