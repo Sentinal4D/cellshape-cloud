@@ -1,4 +1,5 @@
 import torch
+from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import nn
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
@@ -218,10 +219,11 @@ if __name__ == "__main__":
 
     warnings.simplefilter("ignore", UserWarning)
     model = CloudClassifierPL()
+    checkpoint_callback = ModelCheckpoint(monitor="val_loss")
 
     vessel_data = VesselDataModule()
     vessel_data.setup()
-    trainer = pl.Trainer(gpus=1)
+    trainer = pl.Trainer(gpus=1, callbacks=[checkpoint_callback])
 
     trainer.fit(model, vessel_data)
     trainer.test(model=model, datamodule=vessel_data)
