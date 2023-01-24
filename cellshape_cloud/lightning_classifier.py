@@ -1,12 +1,14 @@
 import torch
 from torch import nn
+from torch.utils.data import DataLoader, WeightedRandomSampler
 
 import pytorch_lightning as pl
 from torchmetrics import Accuracy, AUROC
 from pointcloud_dataset import VesselMNIST3D
-from torch.utils.data import DataLoader
 
 from vendor.encoders import DGCNNEncoder
+
+import numpy as np
 
 
 class VesselDataModule(pl.LightningDataModule):
@@ -27,6 +29,15 @@ class VesselDataModule(pl.LightningDataModule):
         self.vessel_train = VesselMNIST3D(
             self.points_dir, centre=True, scale=20.0, partition="train"
         )
+
+        class_sample_count = np.asarray([150, 1185])
+        weight = 1.0 / class_sample_count
+        samples_weight = np.array(weight)
+        samples_weight = torch.from_numpy(samples_weight)
+        self.sampler = WeightedRandomSampler(
+            samples_weight.type("torch.DoubleTensor"), len(samples_weight)
+        )
+
         self.vessel_val = VesselMNIST3D(
             self.points_dir, centre=True, scale=20.0, partition="val"
         )
@@ -35,7 +46,9 @@ class VesselDataModule(pl.LightningDataModule):
         )
 
     def train_dataloader(self):
-        return DataLoader(self.vessel_train, batch_size=self.batch_size)
+        return DataLoader(
+            self.vessel_train, batch_size=self.batch_size, sampler=self.sampler
+        )
 
     def val_dataloader(self):
         return DataLoader(self.vessel_val, batch_size=self.batch_size)
