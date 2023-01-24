@@ -144,7 +144,7 @@ class CloudClassifierPL(pl.LightningModule):
 
         loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
         preds = torch.sigmoid(outputs) > 0.5
-        acc = self.accuracy(torch.squeeze(preds), labels)
+        acc = self.accuracy_weighted(torch.squeeze(preds), labels)
         self.log("train_loss", loss, on_step=True, on_epoch=True, logger=True)
         self.log(
             "train_acc",
@@ -163,7 +163,7 @@ class CloudClassifierPL(pl.LightningModule):
 
         loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
         preds = torch.argmax(outputs, dim=1)
-        acc = self.accuracy(preds, labels)
+        acc = self.accuracy_weighted(preds, labels)
         self.log("val_loss", loss, on_step=True, on_epoch=True, logger=True)
         self.log("val_acc", acc, on_step=True, on_epoch=True, logger=True)
 
@@ -173,13 +173,11 @@ class CloudClassifierPL(pl.LightningModule):
 
         loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
         preds = torch.sigmoid(outputs) > 0.5
-        print(preds)
 
         acc_macro = self.accuracy_macro(torch.squeeze(preds), labels)
         acc_micro = self.accuracy_micro(torch.squeeze(preds), labels)
         acc_weighted = self.accuracy_weighted(torch.squeeze(preds), labels)
         auc = self.AUC(torch.squeeze(torch.sigmoid(outputs)), labels)
-        print(torch.squeeze(torch.sigmoid(outputs)))
         self.log("test_loss", loss, on_step=True, on_epoch=True, logger=True)
         self.log(
             "test_acc_macro",
@@ -210,12 +208,8 @@ if __name__ == "__main__":
     from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
     warnings.simplefilter("ignore", UserWarning)
-    model = CloudClassifierPL().load_from_checkpoint(
-        checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
-        "lightning_logs/version_29/checkpoints/epoch=238-step=10038.ckpt",
-        # hparams_file="/home/mvries/Documents/GitHub/cellshape-cloud/lightning_logs/version_29/hparams.yaml",
-        map_location="cuda",
-    )
+    model = CloudClassifierPL()
+
     vessel_data = VesselDataModule()
     vessel_data.setup()
     trainer = pl.Trainer(
