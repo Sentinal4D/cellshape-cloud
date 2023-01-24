@@ -10,16 +10,14 @@ from pointcloud_dataset import VesselMNIST3D
 from vendor.encoders import DGCNNEncoder
 
 
-def make_weights_for_balanced_classes(images, nclasses):
+def make_weights_for_balanced_classes(images, classes, nclasses=2):
     n_images = len(images)
-    count_per_class = [0] * nclasses
-    for _, image_class in images:
-        count_per_class[image_class] += 1
+    count_per_class = [150, 1185]
     weight_per_class = [0.0] * nclasses
     for i in range(nclasses):
         weight_per_class[i] = float(n_images) / float(count_per_class[i])
     weights = [0] * n_images
-    for idx, (image, image_class) in enumerate(images):
+    for idx, image_class in enumerate(classes):
         weights[idx] = weight_per_class[image_class]
     return weights
 
