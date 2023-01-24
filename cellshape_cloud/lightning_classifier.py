@@ -9,7 +9,19 @@ from pointcloud_dataset import VesselMNIST3D
 
 from vendor.encoders import DGCNNEncoder
 
-import numpy as np
+
+def make_weights_for_balanced_classes(images, nclasses):
+    n_images = len(images)
+    count_per_class = [0] * nclasses
+    for _, image_class in images:
+        count_per_class[image_class] += 1
+    weight_per_class = [0.0] * nclasses
+    for i in range(nclasses):
+        weight_per_class[i] = float(n_images) / float(count_per_class[i])
+    weights = [0] * n_images
+    for idx, (image, image_class) in enumerate(images):
+        weights[idx] = weight_per_class[image_class]
+    return weights
 
 
 class VesselDataModule(pl.LightningDataModule):
@@ -31,13 +43,11 @@ class VesselDataModule(pl.LightningDataModule):
             self.points_dir, centre=True, scale=20.0, partition="train"
         )
 
-        class_sample_count = np.asarray([150, 1185])
-        weight = 1.0 / class_sample_count
-        samples_weight = np.array(weight)
-        samples_weight = torch.from_numpy(samples_weight)
-        self.sampler = WeightedRandomSampler(
-            samples_weight.type("torch.DoubleTensor"), len(samples_weight)
+        weights = make_weights_for_balanced_classes(
+            self.vessel_train.files, len(self.vessel_train.classes)
         )
+        weights = torch.DoubleTensor(weights)
+        self.sampler = WeightedRandomSampler(weights, len(weights))
 
         self.vessel_val = VesselMNIST3D(
             self.points_dir, centre=True, scale=20.0, partition="val"
