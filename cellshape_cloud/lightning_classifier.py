@@ -42,7 +42,7 @@ class VesselDataModule(pl.LightningDataModule):
         )
 
         weights = make_weights_for_balanced_classes(
-            self.vessel_train.files, len(self.vessel_train.classes)
+            self.vessel_train.files, self.vessel_train.class_labels
         )
         weights = torch.DoubleTensor(weights)
         self.sampler = WeightedRandomSampler(weights, len(weights))
