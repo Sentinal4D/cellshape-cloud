@@ -61,6 +61,7 @@ class DGCNNEncoder(nn.Module):
             )
 
     def forward(self, x):
+        print(x.shape)
         x = x.transpose(2, 1)
 
         batch_size = x.size(0)
