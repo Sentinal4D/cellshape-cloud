@@ -28,7 +28,7 @@ class VesselDataModule(pl.LightningDataModule):
     def __init__(
         self,
         transform=None,
-        batch_size=32,
+        batch_size=16,
         points_dir="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/",
     ):
         super().__init__()
@@ -42,7 +42,7 @@ class VesselDataModule(pl.LightningDataModule):
         )
 
         weights = make_weights_for_balanced_classes(
-            self.vessel_train.files, len(self.vessel_train.classes)
+            self.vessel_train.files, self.vessel_train.class_labels
         )
         weights = torch.DoubleTensor(weights)
         self.sampler = WeightedRandomSampler(weights, len(weights))
@@ -182,6 +182,7 @@ class CloudClassifierPL(pl.LightningModule):
 
         loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
         preds = torch.sigmoid(outputs) > 0.5
+        print(torch.sigmoid(outputs))
 
         acc_macro = self.accuracy_macro(torch.squeeze(preds), labels)
         acc_micro = self.accuracy_micro(torch.squeeze(preds), labels)
@@ -226,12 +227,15 @@ if __name__ == "__main__":
             self._run_early_stopping_check(trainer)
 
     warnings.simplefilter("ignore", UserWarning)
-    model = CloudClassifierPL()
+    model = CloudClassifierPL().load_from_checkpoint(
+        checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
+        "lightning_logs/version_52/checkpoints/epoch=132-step=11172.ckpt"
+    )
     checkpoint_callback = ModelCheckpoint(monitor="val_loss")
 
     vessel_data = VesselDataModule()
     vessel_data.setup()
     trainer = pl.Trainer(gpus=1, callbacks=[checkpoint_callback])
 
-    trainer.fit(model, vessel_data)
+    # trainer.fit(model, vessel_data)
     trainer.test(model=model, datamodule=vessel_data)
