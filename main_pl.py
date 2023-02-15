@@ -72,7 +72,7 @@ def train_vae_pl(args):
 
         else:
             try:
-                autoencoder.load_model(args.pretrained_path)
+                autoencoder.load_model_foldingnet(args.pretrained_path)
             except Exception as e:
                 print(f"Can't load pretrained network due to error {e}.")
 
@@ -194,13 +194,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/",
+        default="/home/mvries/Documents/Datasets/OPM/"
+        "SingleCellFromNathan_17122021/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="VesselMNIST",
+        default="SingleCell",
         type=str,
         choices=[
             "SingleCell",
@@ -217,8 +218,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataframe_path",
-        default="/home/mvries/Documents/Datasets/OPM/VickyCellshape/"
-        "cn_allFeatures_withGeneNames_updated.csv",
+        default="/home/mvries/Documents/Datasets/OPM/"
+        "SingleCellFromNathan_17122021/all_data_removed"
+        "wrong_ori_removedTwo.csv",
         type=str,
         help="Please provide the path to the dataframe "
         "containing information on the dataset.",
@@ -278,13 +280,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default=None,
+        default="/run/user/1128299809/gvfs/smb-share:server="
+        "rds.icr.ac.uk,share="
+        "data/DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/T"
+        "earingNetNew/nets/"
+        "dgcnn_foldingnet_128_009.pt",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
     parser.add_argument(
         "--is_pretrained_lightning",
-        default=True,
+        default=False,
         type=str2bool,
         help="Is the pretrained model a lightning module?",
     )
@@ -309,7 +315,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cell_component",
-        default="nuc",
+        default="cell",
         type=str,
         help="Enter the number of points in the point cloud",
     )

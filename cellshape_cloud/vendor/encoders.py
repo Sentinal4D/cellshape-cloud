@@ -61,7 +61,8 @@ class DGCNNEncoder(nn.Module):
             )
 
     def forward(self, x):
-        print(x.shape)
+        # print(x.shape)
+        # print(x)
         x = x.transpose(2, 1)
 
         batch_size = x.size(0)
@@ -242,3 +243,10 @@ class DGCNN(nn.Module):
         x = self.dp2(x)
         x = self.linear3(x)
         return x
+
+
+if __name__ == "__main__":
+    model = DGCNNEncoder(128)
+    inp = torch.rand((1, 2048, 3))
+    out = model(inp)
+    print(out.shape)

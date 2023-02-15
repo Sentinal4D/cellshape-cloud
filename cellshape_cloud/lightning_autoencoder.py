@@ -39,8 +39,14 @@ class CloudAutoEncoderPL(pl.LightningModule):
         model_dict = (
             self.model.state_dict()
         )  # load parameters from pre-trained FoldingNet
+        for k in checkpoint["model_state_dict"]:
+            print(k)
+
+        for k in model_dict:
+            print(k)
 
         for k in checkpoint["model_state_dict"]:
+            # print(k)
             if k in model_dict:
                 model_dict[k] = checkpoint["model_state_dict"][k]
                 print("    Found weight: " + k)
@@ -49,7 +55,30 @@ class CloudAutoEncoderPL(pl.LightningModule):
                     "model_state_dict"
                 ][k]
                 print("    Found weight: " + k)
-        print("Done loading encoder")
+        print("Done loading autoencoder")
+
+    def load_model_foldingnet(self, path):
+        checkpoint = torch.load(path, map_location="cuda:0")
+        model_dict = (
+            self.model.state_dict()
+        )  # load parameters from pre-trained FoldingNet
+        for k in checkpoint["model_state_dict"]:
+            print(k)
+
+        for k in model_dict:
+            print(k)
+
+        for k in checkpoint["model_state_dict"]:
+            # print(k)
+            if k in model_dict:
+                model_dict[k] = checkpoint["model_state_dict"][k]
+                print("    Found weight: " + k)
+            elif k.replace("folding.", "") in model_dict:
+                model_dict[k.replace("folding.", "")] = checkpoint[
+                    "model_state_dict"
+                ][k]
+                print("    Found weight: " + k)
+        print("Done loading autoencoder")
 
         self.model.load_state_dict(model_dict)
 
@@ -83,7 +112,7 @@ class CloudAutoEncoderPL(pl.LightningModule):
         self.model.load_state_dict(model_dict)
 
     def training_step(self, batch, batch_idx):
-        inputs = batch[2]
+        inputs = batch[0]
         outputs, features = self.model(inputs)
 
         loss = self.criterion(inputs, outputs)
