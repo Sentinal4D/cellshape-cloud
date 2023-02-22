@@ -1,4 +1,4 @@
-__version__ = "0.0.28"
+__version__ = "0.1.0-rc0"
 from .cloud_autoencoder import CloudAutoEncoder
 from .pointcloud_dataset import PointCloudDataset
 from .training_functions import train
