@@ -5,13 +5,14 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 
 import pytorch_lightning as pl
 from torchmetrics import Accuracy, AUROC
-from pointcloud_dataset import VesselMNIST3D
+from pointcloud_dataset import VesselMNIST3D, SingleCellDataset
 
 from vendor.encoders import DGCNNEncoder
 
 
 def make_weights_for_balanced_classes(images, classes, nclasses=2):
     n_images = len(images)
+
     count_per_class = [150, 1185]
     weight_per_class = [0.0] * nclasses
     for i in range(nclasses):
@@ -22,6 +23,64 @@ def make_weights_for_balanced_classes(images, classes, nclasses=2):
     return weights
 
 
+class SingleCellDataModule(pl.LightningDataModule):
+    def __init__(
+        self,
+        annotations_file="/home/mvries/Documents/Datasets/OPM/"
+        "SingleCellFromNathan_17122021/all_data_removedwrong"
+        "_ori_removedTwo_train_test.csv",
+        points_dir="/home/mvries/Documents/Datasets/OPM/"
+        "SingleCellFromNathan_17122021",
+        img_size=400,
+        transform=None,
+        cell_component="cell",
+        num_points=2048,
+        batch_size=16,
+    ):
+        super().__init__()
+        self.annot_df = annotations_file
+        self.img_dir = points_dir
+        self.img_size = img_size
+        self.transform = transform
+        self.cell_component = cell_component
+        self.num_points = num_points
+        self.batch_size = batch_size
+
+    def setup(self, stage=None):
+        self.train_dset = SingleCellDataset(
+            annotations_file=self.annot_df,
+            points_dir=self.img_dir,
+            partition="train",
+        )
+
+        self.val_dset = SingleCellDataset(
+            annotations_file=self.annot_df,
+            points_dir=self.img_dir,
+            partition="val",
+        )
+
+        self.test_dset = SingleCellDataset(
+            annotations_file=self.annot_df,
+            points_dir=self.img_dir,
+            partition="test",
+        )
+
+    def train_dataloader(self):
+        return DataLoader(
+            self.train_dset, batch_size=self.batch_size, shuffle=True
+        )
+
+    def val_dataloader(self):
+        return DataLoader(
+            self.val_dset, batch_size=self.batch_size, shuffle=True
+        )
+
+    def test_dataloader(self):
+        return DataLoader(
+            self.test_dset, batch_size=self.batch_size, shuffle=True
+        )
+
+
 class VesselDataModule(pl.LightningDataModule):
     """Cassava DataModule for Lightning"""
 
@@ -29,7 +88,7 @@ class VesselDataModule(pl.LightningDataModule):
         self,
         transform=None,
         batch_size=16,
-        points_dir="/home/mvries/Documents/Datasets/MedMNIST/vesselmnist3d/",
+        points_dir="/mnt/nvme0n1/Datasets/MedMNIST/vesselmnist3d/",
     ):
         super().__init__()
         self.batch_size = batch_size
@@ -67,24 +126,24 @@ class VesselDataModule(pl.LightningDataModule):
 
 
 class CloudClassifierPL(pl.LightningModule):
-    def __init__(self, criterion=nn.BCEWithLogitsLoss(), num_classes=2):
+    def __init__(self, criterion=nn.CrossEntropyLoss(), num_classes=10):
         super(CloudClassifierPL, self).__init__()
 
         self.save_hyperparameters(ignore=["criterion", "model"])
         self.lr = 0.00001
         self.criterion = criterion
-        self.model = DGCNNEncoder(num_features=1)
+        self.model = DGCNNEncoder(num_features=10)
         self.num_classes = num_classes
         self.accuracy_macro = Accuracy(
-            task="binary", num_classes=2, average="macro"
+            task="binary", num_classes=num_classes, average="macro"
         )
         self.accuracy_micro = Accuracy(
-            task="binary", num_classes=2, average="micro"
+            task="binary", num_classes=num_classes, average="micro"
         )
         self.accuracy_weighted = Accuracy(
-            task="binary", num_classes=2, average="weighted"
+            task="binary", num_classes=num_classes, average="weighted"
         )
-        self.AUC = AUROC(task="binary")
+        self.AUC = AUROC(task="multiclass", num_classes=num_classes)
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(
@@ -150,9 +209,9 @@ class CloudClassifierPL(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         inputs, labels = batch[0], batch[1]
         outputs = self.model(inputs)
-
-        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
-        preds = torch.sigmoid(outputs) > 0.5
+        labels = torch.squeeze(labels)
+        loss = self.criterion(outputs, labels)
+        preds = torch.sigmoid(outputs)
         acc = self.accuracy_weighted(torch.squeeze(preds), labels)
         self.log("train_loss", loss, on_step=True, on_epoch=True, logger=True)
         self.log(
@@ -169,9 +228,9 @@ class CloudClassifierPL(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         inputs, labels = batch[0], batch[1]
         outputs = self.model(inputs)
-
-        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
-        preds = torch.argmax(outputs, dim=1)
+        labels = torch.squeeze(labels)
+        loss = self.criterion(outputs, labels)
+        preds = torch.sigmoid(outputs)
         acc = self.accuracy_weighted(preds, labels)
         self.log("val_loss", loss, on_step=True, on_epoch=True, logger=True)
         self.log("val_acc", acc, on_step=True, on_epoch=True, logger=True)
@@ -179,10 +238,9 @@ class CloudClassifierPL(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         inputs, labels = batch[0], batch[1]
         outputs = self.model(inputs)
-
-        loss = self.criterion(outputs, torch.unsqueeze(labels, 1).float())
-        preds = torch.sigmoid(outputs) > 0.5
-        print(torch.sigmoid(outputs))
+        labels = torch.squeeze(labels)
+        loss = self.criterion(torch.squeeze(outputs), labels)
+        preds = torch.sigmoid(outputs)
 
         acc_macro = self.accuracy_macro(torch.squeeze(preds), labels)
         acc_micro = self.accuracy_micro(torch.squeeze(preds), labels)
@@ -227,15 +285,18 @@ if __name__ == "__main__":
             self._run_early_stopping_check(trainer)
 
     warnings.simplefilter("ignore", UserWarning)
-    model = CloudClassifierPL().load_from_checkpoint(
-        checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
-        "lightning_logs/version_52/checkpoints/epoch=132-step=11172.ckpt"
-    )
+    model = CloudClassifierPL()
+    # .load_from_checkpoint(
+    # checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
+    # "lightning_logs/version_52/checkpoints/epoch=132-step=11172.ckpt"
+    # )
     checkpoint_callback = ModelCheckpoint(monitor="val_loss")
 
-    vessel_data = VesselDataModule()
-    vessel_data.setup()
-    trainer = pl.Trainer(gpus=1, callbacks=[checkpoint_callback])
+    cell_data = SingleCellDataModule()
+    cell_data.setup()
+    trainer = pl.Trainer(
+        accelerator="gpu", devices=1, callbacks=[checkpoint_callback]
+    )
 
-    # trainer.fit(model, vessel_data)
-    trainer.test(model=model, datamodule=vessel_data)
+    trainer.fit(model, cell_data)
+    trainer.test(model=model, datamodule=cell_data)

@@ -48,6 +48,7 @@ class SingleCellDataset(Dataset):
         transform=None,
         cell_component="cell",
         num_points=2048,
+        partition="all",
     ):
         self.annot_df = pd.read_csv(annotations_file)
         self.img_dir = points_dir
@@ -55,12 +56,26 @@ class SingleCellDataset(Dataset):
         self.transform = transform
         self.cell_component = cell_component
         self.num_points = num_points
+        self.partition = partition
+        if self.partition != "all":
 
-        self.new_df = self.annot_df[
-            (self.annot_df.xDim <= self.img_size)
-            & (self.annot_df.yDim <= self.img_size)
-            & (self.annot_df.zDim <= self.img_size)
-        ].reset_index(drop=True)
+            self.new_df = self.annot_df[
+                (self.annot_df.xDim <= self.img_size)
+                & (self.annot_df.yDim <= self.img_size)
+                & (self.annot_df.zDim <= self.img_size)
+                & (self.annot_df.Splits == self.partition)
+            ].reset_index(drop=True)
+        else:
+            self.new_df = self.annot_df[
+                (self.annot_df.xDim <= self.img_size)
+                & (self.annot_df.yDim <= self.img_size)
+                & (self.annot_df.zDim <= self.img_size)
+            ].reset_index(drop=True)
+
+        from sklearn import preprocessing
+
+        self.le = preprocessing.LabelEncoder()
+        self.le.fit(self.new_df["Treatment"].values)
 
     def __len__(self):
         return len(self.new_df)
@@ -99,8 +114,8 @@ class SingleCellDataset(Dataset):
         feats = torch.tensor(feats)
 
         serial_number = self.new_df.loc[idx, "serialNumber"]
-
-        return image, treatment, feats, serial_number
+        enc_labels = torch.tensor(self.le.transform([treatment]))
+        return image, enc_labels, treatment, serial_number
 
 
 class GefGapDataset(Dataset):
