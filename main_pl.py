@@ -18,6 +18,8 @@ from cellshape_cloud.pointcloud_dataset import (
 from cellshape_cloud.reports import get_experiment_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
 
+# Using pytorch lightning to train on multiple GPUs
+
 
 def train_vae_pl(args):
 
