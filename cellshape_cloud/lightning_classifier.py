@@ -132,7 +132,7 @@ class CloudClassifierPL(pl.LightningModule):
         self.save_hyperparameters(ignore=["criterion", "model"])
         self.lr = 0.00001
         self.criterion = criterion
-        self.model = DGCNNEncoder(num_features=10)
+        self.model = DGCNNEncoder(num_features=num_classes)
         self.num_classes = num_classes
         self.accuracy_macro = Accuracy(
             task="binary", num_classes=num_classes, average="macro"
@@ -285,7 +285,7 @@ if __name__ == "__main__":
             self._run_early_stopping_check(trainer)
 
     warnings.simplefilter("ignore", UserWarning)
-    model = CloudClassifierPL()
+    model = CloudClassifierPL(num_classes=5)
     # .load_from_checkpoint(
     # checkpoint_path="/home/mvries/Documents/GitHub/cellshape-cloud/"
     # "lightning_logs/version_52/checkpoints/epoch=132-step=11172.ckpt"
