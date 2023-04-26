@@ -17,6 +17,7 @@ requirements = [
     "umap-learn",
     "scikit-learn",
     "tensorboard",
+    "h5py",
 ]
 
 setup(

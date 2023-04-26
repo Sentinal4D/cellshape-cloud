@@ -75,7 +75,7 @@ class SingleCellDataset(Dataset):
         from sklearn import preprocessing
 
         self.le = preprocessing.LabelEncoder()
-        self.le.fit(self.new_df["Class"].values)
+        self.le.fit(self.new_df["Treatment"].values)
 
     def __len__(self):
         return len(self.new_df)
@@ -83,7 +83,7 @@ class SingleCellDataset(Dataset):
     def __getitem__(self, idx):
         # read the image
         treatment = self.new_df.loc[idx, "Treatment"]
-        class_id = self.new_df.loc[idx, "Class"]
+        # class_id = self.new_df.loc[idx, "Class"]
         plate_num = "Plate" + str(self.new_df.loc[idx, "PlateNumber"])
         if self.num_points == 4096:
             num_str = "_4096"
@@ -115,7 +115,7 @@ class SingleCellDataset(Dataset):
         feats = torch.tensor(feats)
 
         serial_number = self.new_df.loc[idx, "serialNumber"]
-        enc_labels = torch.tensor(self.le.transform([class_id]))
+        enc_labels = torch.tensor(self.le.transform([treatment]))
         return image, enc_labels, treatment, serial_number
 
 
