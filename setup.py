@@ -10,7 +10,7 @@ requirements = [
     "torch",
     "torchvision",
     "pyntcloud",
-    "numpy==1.21",
+    "numpy",
     "matplotlib",
     "tqdm",
     "datetime",
