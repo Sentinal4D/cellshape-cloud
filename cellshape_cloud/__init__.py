@@ -1,6 +1,6 @@
 __version__ = "0.1.2"
 from .cloud_autoencoder import CloudAutoEncoder
-from .pointcloud_dataset import PointCloudDataset
+from .pointcloud_dataset import PointCloudDataset, SingleCellDataset
 from .training_functions import train
 from .train_autoencoder import train_autoencoder
 from .reports import *
@@ -8,6 +8,7 @@ from .reports import *
 __all__ = (
     "CloudAutoEncoder",
     "PointCloudDataset",
+    "SingleCellDataset",
     "train",
     "train_autoencoder",
 )
