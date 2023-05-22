@@ -15,8 +15,25 @@ from cellshape_cloud.pointcloud_dataset import (
     OPMDataset,
     VesselMNIST3D,
 )
-from cellshape_cloud.reports import get_experiment_name
+from cellshape_cloud.reports import get_experiment_name, get_model_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
+from lightning.pytorch.loggers import WandbLogger
+from pathlib import Path
+
+from torch.nn.parameter import Parameter
+
+
+def load_my_state_dict(mod, state_dict):
+    own_state = mod.state_dict()
+    for name, param in state_dict.items():
+        if name not in own_state:
+            print("    Not found: " + name)
+            continue
+        if isinstance(param, Parameter):
+            # backwards compatibility for serialized parameters
+            param = Parameter.data
+        own_state[name].copy_(param)
+
 
 # Using pytorch lightning to train on multiple GPUs
 
@@ -38,31 +55,44 @@ def train_vae_pl(args):
     autoencoder = CloudAutoEncoderPL(args=args, model=model)
 
     if args.is_pretrained_shapenet:
+        # try:
+        #     checkpoint = torch.load(
+        #         args.pretrained_path,
+        #         map_location=lambda storage, loc: storage
+        #     )
+        #     # "load encoder"
+        #     model_dict = autoencoder.state_dict()
+        #     for k in checkpoint:
+        #         if k in model_dict:
+        #             model_dict[k] = checkpoint[k]
+        #             print("    Found weight: " + k)
+        #         elif k.replace("encoder.", "model.encoder.") in model_dict:
+        #             model_dict[
+        #                 k.replace("encoder.", "model.encoder.")
+        #             ] = checkpoint[k]
+        #             print("    Found weight: " + k)
+        #         elif k.replace("decoder.", "model.decoder.") in model_dict:
+        #             model_dict[
+        #                 k.replace("decoder.", "model.decoder.")
+        #             ] = checkpoint[k]
+        #             print("    Found weight: " + k)
+        #
+        #     autoencoder.load_state_dict(model_dict)
+        #
+        # except Exception as e:
+        #     print(f"Cannot load model due to error {e}.")
+        #     print("Training from scratch")
         try:
+            file = list(Path(args.pretrained_path).glob("*.pkl"))[0]
+            print(f"Loading model from {file}")
             checkpoint = torch.load(
-                args.pretrained_path, map_location=lambda storage, loc: storage
+                file, map_location=lambda storage, loc: storage
             )
-            # "load encoder"
-            model_dict = autoencoder.state_dict()
-            for k in checkpoint:
-                if k in model_dict:
-                    model_dict[k] = checkpoint[k]
-                    print("    Found weight: " + k)
-                elif k.replace("encoder.", "model.encoder.") in model_dict:
-                    model_dict[
-                        k.replace("encoder.", "model.encoder.")
-                    ] = checkpoint[k]
-                    print("    Found weight: " + k)
-                elif k.replace("decoder.", "model.decoder.") in model_dict:
-                    model_dict[
-                        k.replace("decoder.", "model.decoder.")
-                    ] = checkpoint[k]
-                    print("    Found weight: " + k)
-
-            autoencoder.load_state_dict(model_dict)
-
+            load_my_state_dict(model, checkpoint)
+            autoencoder = CloudAutoEncoderPL(args=args, model=model)
         except Exception as e:
             print(f"Cannot load model due to error {e}.")
+            print("Training from scratch")
 
     else:
         if args.is_pretrained_lightning:
@@ -128,6 +158,21 @@ def train_vae_pl(args):
         save_top_k=1, monitor="loss", every_n_epochs=1, save_last=True
     )
 
+    model_name = get_model_name(autoencoder.model) + f"_{args.shape}"
+
+    if args.logger == "wandb":
+        logger = WandbLogger(
+            project=args.project_name,
+            name=model_name,
+            log_model=True,
+            save_dir=args.output_dir + logging_info[3],
+        )
+    else:
+        logger = pl.loggers.TensorBoardLogger(
+            save_dir=args.log_dir,
+            name=args.drug_label,
+        )
+
     trainer = pl.Trainer(
         accelerator="gpu",
         devices=args.gpus,
@@ -135,6 +180,7 @@ def train_vae_pl(args):
         default_root_dir=args.output_dir + logging_info[3],
         callbacks=[checkpoint_callback],
         strategy="ddp_find_unused_parameters_false",
+        logger=logger,
     )
 
     if find_lr:
@@ -196,8 +242,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/home/mvries/Documents/Datasets/OPM/"
-        "SingleCellFromNathan_17122021/",
+        default="/mnt/nvme0n1/Datasets/SingleCellFromNathan_17122021/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
@@ -220,8 +265,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataframe_path",
-        default="/home/mvries/Documents/Datasets/OPM/"
-        "SingleCellFromNathan_17122021/all_data_removed"
+        default="/mnt/nvme0n1/Datasets/SingleCellFromNathan_17122021/"
+        "all_data_removed"
         "wrong_ori_removedTwo.csv",
         type=str,
         help="Please provide the path to the dataframe "
@@ -246,17 +291,17 @@ if __name__ == "__main__":
         help="Please provide the number of " "features to extract.",
     )
     parser.add_argument(
-        "--k", default=20, type=int, help="Please provide the value for k."
+        "--k", default=16, type=int, help="Please provide the value for k."
     )
     parser.add_argument(
         "--encoder_type",
-        default="dgcnn",
+        default="foldingnet",
         type=str,
         help="Please provide the type of encoder.",
     )
     parser.add_argument(
         "--decoder_type",
-        default="foldingnetbasic",
+        default="foldingnet",
         type=str,
         help="Please provide the type of decoder.",
     )
@@ -275,18 +320,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--proximal",
-        default=0,
+        default=2,
         type=int,
         help="Please provide the value of proximality "
         "[0 = distal, 1 = proximal, 2 = both].",
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs/smb-share:server="
-        "rds.icr.ac.uk,share="
-        "data/DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/T"
-        "earingNetNew/nets/"
-        "dgcnn_foldingnet_128_009.pt",
+        default="/home/mvries/Downloads/shapenetcorev2_278.pkl",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
@@ -323,7 +364,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--is_pretrained_shapenet",
-        default=False,
+        default=True,
         type=str2bool,
         help="Was trained on shapenet?",
     )
@@ -336,15 +377,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--sphere_path",
-        default="/home/mvries/Documents/GitHub/"
-        "cellshape-cloud/cellshape_cloud/vendor/sphere.npy",
+        default="./cellshape_cloud/vendor/sphere.npy",
         type=str,
         help="Path to sphere.",
     )
     parser.add_argument(
         "--gaussian_path",
-        default="/home/mvries/Documents/GitHub/"
-        "cellshape-cloud/cellshape_cloud/vendor/gaussian.npy",
+        default="./cellshape_cloud/vendor/gaussian.npy",
         type=str,
         help="Path to gaussian shape.",
     )
@@ -365,6 +404,19 @@ if __name__ == "__main__":
         default="./",
         type=str,
         help="Standard deviation of sampled points.",
+    )
+    parser.add_argument(
+        "--logger",
+        type=str,
+        default="wandb",
+        choices=["wandb", "tensorboard", "neptune"],
+        help="Whether to use wandb for logging",
+    )
+    parser.add_argument(
+        "--project_name",
+        type=str,
+        default="StartFromShapeNet",
+        help="Name of the project to log to",
     )
 
     arguments = parser.parse_args()

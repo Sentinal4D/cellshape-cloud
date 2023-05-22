@@ -130,6 +130,7 @@ class FoldNetEncoder(nn.Module):
         if (self.num_features < self.lin_features_len) or (
             self.num_features > self.lin_features_len
         ):
+            self.flatten = Flatten()
             self.embedding = nn.Linear(
                 self.lin_features_len, self.num_features, bias=False
             )
