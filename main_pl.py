@@ -17,7 +17,7 @@ from cellshape_cloud.pointcloud_dataset import (
 )
 from cellshape_cloud.reports import get_experiment_name, get_model_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
-from lightning.pytorch.loggers import WandbLogger
+from pytorch_lightning.loggers.wandb import WandbLogger
 from pathlib import Path
 
 from torch.nn.parameter import Parameter
