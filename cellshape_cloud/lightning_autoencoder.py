@@ -18,13 +18,17 @@ class CloudAutoEncoderPL(pl.LightningModule):
         self.model = model
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(
+        optimizer = torch.optim.AdamW(
             self.parameters(),
             lr=self.lr,
-            betas=(0.9, 0.999),
-            weight_decay=1e-6,
+            weight_decay=1e-4,
         )
-        return optimizer
+        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=self.args.num_epochs_autoencoder,
+            eta_min=self.lr / 50,
+        )
+        return [optimizer], [lr_scheduler]
 
     def encode(self, x):
         z = self.model.encoder(x)

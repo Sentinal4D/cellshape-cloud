@@ -158,7 +158,7 @@ def train_vae_pl(args):
         save_top_k=1, monitor="loss", every_n_epochs=1, save_last=True
     )
 
-    model_name = get_model_name(autoencoder.model) + f"_{args.shape}"
+    model_name = get_model_name(autoencoder.model)
 
     if args.logger == "wandb":
         logger = WandbLogger(
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--num_points",
-        default=2046,
+        default=2048,
         type=int,
         help="Enter the number of points in the point cloud",
     )
@@ -415,7 +415,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--project_name",
         type=str,
-        default="StartFromShapeNet",
+        default="StartFromShapeNet_local",
         help="Name of the project to log to",
     )
 

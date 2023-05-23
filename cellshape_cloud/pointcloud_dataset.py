@@ -110,10 +110,6 @@ class SingleCellDataset(Dataset):
         std = torch.tensor([[20.0, 20.0, 20.0]])
         image = (image - mean) / std
 
-        # return the classical features as torch tensor
-        feats = self.new_df.iloc[idx, 16:-4]
-        feats = torch.tensor(feats)
-
         serial_number = self.new_df.loc[idx, "serialNumber"]
         enc_labels = torch.tensor(self.le.transform([treatment]))
         return image, enc_labels, treatment, serial_number
