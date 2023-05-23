@@ -160,7 +160,7 @@ def train_vae_pl(args):
     )
     lr_monitor = LearningRateMonitor(logging_interval="step")
     early_stop_callback = EarlyStopping(
-        monitor="train_loss",
+        monitor="loss",
         min_delta=0.00,
         patience=50,
         verbose=True,
