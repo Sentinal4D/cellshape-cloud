@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 import argparse
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 import logging
 
 from cellshape_cloud.lightning_autoencoder import CloudAutoEncoderPL
@@ -19,6 +19,7 @@ from cellshape_cloud.reports import get_experiment_name, get_model_name
 from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
 from pytorch_lightning.loggers.wandb import WandbLogger
 from pathlib import Path
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from torch.nn.parameter import Parameter
 
@@ -157,6 +158,14 @@ def train_vae_pl(args):
     checkpoint_callback = ModelCheckpoint(
         save_top_k=1, monitor="loss", every_n_epochs=1, save_last=True
     )
+    lr_monitor = LearningRateMonitor(logging_interval="step")
+    early_stop_callback = EarlyStopping(
+        monitor="train_loss",
+        min_delta=0.00,
+        patience=50,
+        verbose=True,
+        mode="min",
+    )
 
     model_name = get_model_name(autoencoder.model)
 
@@ -178,7 +187,7 @@ def train_vae_pl(args):
         devices=args.gpus,
         max_epochs=args.num_epochs_autoencoder,
         default_root_dir=args.output_dir + logging_info[3],
-        callbacks=[checkpoint_callback],
+        callbacks=[checkpoint_callback, lr_monitor, early_stop_callback],
         strategy="ddp",
         logger=logger,
     )
