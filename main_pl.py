@@ -20,8 +20,6 @@ from cellshape_cloud.cloud_autoencoder import CloudAutoEncoder
 from pytorch_lightning.loggers.wandb import WandbLogger
 from pathlib import Path
 
-from pytorch_lightning.strategies import DDPStrategy
-
 from torch.nn.parameter import Parameter
 
 
@@ -181,7 +179,7 @@ def train_vae_pl(args):
         max_epochs=args.num_epochs_autoencoder,
         default_root_dir=args.output_dir + logging_info[3],
         callbacks=[checkpoint_callback],
-        strategy=DDPStrategy(static_graph=True),
+        strategy="ddp",
         logger=logger,
     )
 
