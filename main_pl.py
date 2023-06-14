@@ -26,6 +26,7 @@ from torch.nn.parameter import Parameter
 
 def load_my_state_dict(mod, state_dict):
     own_state = mod.state_dict()
+
     for name, param in state_dict.items():
         if name not in own_state:
             print("    Not found: " + name)
@@ -85,6 +86,7 @@ def train_vae_pl(args):
         #     print("Training from scratch")
         try:
             file = list(Path(args.pretrained_path).glob("*.pkl"))[0]
+
             print(f"Loading model from {file}")
             checkpoint = torch.load(
                 file, map_location=lambda storage, loc: storage
@@ -178,8 +180,8 @@ def train_vae_pl(args):
         )
     else:
         logger = pl.loggers.TensorBoardLogger(
-            save_dir=args.log_dir,
-            name=args.drug_label,
+            save_dir=args.output_dir + logging_info[3],
+            # name=args.drug_label,
         )
 
     trainer = pl.Trainer(
@@ -251,13 +253,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/mnt/nvme0n1/Datasets/SingleCellFromNathan_17122021/",
+        default="/mnt/nvme0n1/Datasets/ShapeAE_datasets/RedBloodCell/"
+        "mesh_smoothed_pointcloud/",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="SingleCell",
+        default="Other",
         type=str,
         choices=[
             "SingleCell",
@@ -283,7 +286,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output_dir",
-        default="/home/mvries/Documents/Testing_output_cloud/",
+        default="/home/mvries/Documents/ShapeNetv2/",
         type=str,
         help="Please provide the path for where to save output.",
     )
@@ -310,7 +313,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--decoder_type",
-        default="foldingnet",
+        default="foldingnetbasic",
         type=str,
         help="Please provide the type of decoder.",
     )
@@ -336,7 +339,10 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/home/mvries/Downloads/shapenetcorev2_278.pkl",
+        default="/run/user/1128299809/gvfs/smb-share:"
+        "server=rds.icr.ac.uk,share=data/"
+        "DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/TearingNetNew/nets/"
+        "dgcnn_foldingnet_128_009.pt",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
@@ -373,7 +379,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--is_pretrained_shapenet",
-        default=True,
+        default=False,
         type=str2bool,
         help="Was trained on shapenet?",
     )
@@ -417,14 +423,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--logger",
         type=str,
-        default="wandb",
+        default="tensorboard",
         choices=["wandb", "tensorboard", "neptune"],
         help="Whether to use wandb for logging",
     )
     parser.add_argument(
         "--project_name",
         type=str,
-        default="StartFromShapeNet_local",
+        default="StartFromShapeNet_local_dgcnn_k40",
         help="Name of the project to log to",
     )
 
