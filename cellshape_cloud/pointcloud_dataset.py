@@ -106,8 +106,10 @@ class SingleCellDataset(Dataset):
         )
         image = PyntCloud.from_file(img_path + ".ply")
         image = torch.tensor(image.points.values)
-        mean = torch.mean(image, 0)
-        std = torch.tensor([[20.0, 20.0, 20.0]])
+        # mean = torch.mean(image, 0)
+        # std = torch.tensor([[20.0, 20.0, 20.0]])
+        mean = torch.tensor([[13.4828, 26.5144, 24.4187]])
+        std = torch.tensor([[9.2821, 20.4512, 18.9049]])
         image = (image - mean) / std
 
         serial_number = self.new_df.loc[idx, "serialNumber"]

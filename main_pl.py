@@ -22,6 +22,9 @@ from pathlib import Path
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from torch.nn.parameter import Parameter
+import warnings
+
+warnings.filterwarnings("ignore")
 
 
 def load_my_state_dict(mod, state_dict):
@@ -56,7 +59,7 @@ def train_vae_pl(args):
     )
     autoencoder = CloudAutoEncoderPL(args=args, model=model)
 
-    if args.is_pretrained_shapenet:
+    if args.is_pretrained_shapenet_an_tao:
         # try:
         #     checkpoint = torch.load(
         #         args.pretrained_path,
@@ -99,11 +102,44 @@ def train_vae_pl(args):
 
     else:
         if args.is_pretrained_lightning:
-            try:
-                autoencoder.load_lightning(args.pretrained_path)
+            if args.is_pretrained_shapenet:
+                try:
+                    new_path = (
+                        args.pretrained_path + f"{args.encoder_type}_"
+                        f"{args.decoder_type}"
+                        f"_{args.num_features}_"
+                        f"{args.shape}_001/"
+                        f"ShapeNetExperiment/"
+                    )
 
-            except Exception as e:
-                print(f"Cannot load model due to error {e}.")
+                    new_path = Path(new_path)
+                    print(f"Looking for pretrained model in {new_path}")
+                    for mod in new_path.iterdir():
+                        if f"_k{args.k}" in str(mod):
+                            pretrained_path = (
+                                str(mod) + "/checkpoints" + "/last.ckpt"
+                            )
+                            print(f"Loading model from {pretrained_path}")
+                            break
+                    autoencoder = autoencoder.load_from_checkpoint(
+                        str(pretrained_path), model=model
+                    )
+                    print("Loaded lightning model effectively")
+                except Exception as e:
+                    print(
+                        f"Encountered error {e} when trying to "
+                        f"load pretrained "
+                        f"model"
+                    )
+            else:
+                try:
+                    # autoencoder.load_lightning(args.pretrained_path)
+                    autoencoder = autoencoder.load_from_checkpoint(
+                        args.pretrained_path, model=model
+                    )
+                    print("Loaded lightning model effectively")
+                except Exception as e:
+                    print(f"Cannot load model due to error {e}.")
 
         else:
             try:
@@ -253,14 +289,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cloud_dataset_path",
-        default="/mnt/nvme0n1/Datasets/ShapeAE_datasets/RedBloodCell/"
-        "mesh_smoothed_pointcloud/",
+        default="/mnt/nvme0n1/Datasets/SingleCellFromNathan_17122021",
         type=str,
         help="Please provide the path to the " "dataset of the point clouds.",
     )
     parser.add_argument(
         "--dataset_type",
-        default="Other",
+        default="SingleCell",
         type=str,
         choices=[
             "SingleCell",
@@ -286,7 +321,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output_dir",
-        default="/home/mvries/Documents/ShapeNetv2/",
+        default="/home/mvries/Documents/NewFoldingNet/",
         type=str,
         help="Please provide the path for where to save output.",
     )
@@ -298,12 +333,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--num_features",
-        default=128,
+        default=512,
         type=int,
         help="Please provide the number of " "features to extract.",
     )
     parser.add_argument(
-        "--k", default=16, type=int, help="Please provide the value for k."
+        "--k", default=20, type=int, help="Please provide the value for k."
     )
     parser.add_argument(
         "--encoder_type",
@@ -313,7 +348,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--decoder_type",
-        default="foldingnetbasic",
+        default="foldingnet",
         type=str,
         help="Please provide the type of decoder.",
     )
@@ -339,16 +374,15 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained_path",
-        default="/run/user/1128299809/gvfs/smb-share:"
-        "server=rds.icr.ac.uk,share=data/"
-        "DBI/DUDBI/DYNCESYS/mvries/ResultsAlma/TearingNetNew/nets/"
-        "dgcnn_foldingnet_128_009.pt",
+        default="/run/user/1128299809/gvfs/smb-share:server=rds."
+        "icr.ac.uk,share=data/DBI/DUDBI/DYNCESYS/mvries/"
+        "ResultsAlma/ShapeNet/",
         type=str,
         help="Please provide the path to a pretrained autoencoder.",
     )
     parser.add_argument(
         "--is_pretrained_lightning",
-        default=False,
+        default=True,
         type=str2bool,
         help="Is the pretrained model a lightning module?",
     )
@@ -379,6 +413,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--is_pretrained_shapenet",
+        default=True,
+        type=str2bool,
+        help="Was trained on shapenet?",
+    )
+    parser.add_argument(
+        "--is_pretrained_shapenet_an_tao",
         default=False,
         type=str2bool,
         help="Was trained on shapenet?",
@@ -423,14 +463,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--logger",
         type=str,
-        default="tensorboard",
+        default="wandb",
         choices=["wandb", "tensorboard", "neptune"],
         help="Whether to use wandb for logging",
     )
     parser.add_argument(
         "--project_name",
         type=str,
-        default="StartFromShapeNet_local_dgcnn_k40",
+        default="NewFoldingNet",
         help="Name of the project to log to",
     )
 
