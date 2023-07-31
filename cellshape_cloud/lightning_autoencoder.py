@@ -23,12 +23,13 @@ class CloudAutoEncoderPL(pl.LightningModule):
             lr=self.lr,
             weight_decay=1e-4,
         )
-        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer,
-            T_max=self.args.num_epochs_autoencoder,
-            eta_min=self.lr / 50,
-        )
-        return [optimizer], [lr_scheduler]
+        # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        #     optimizer,
+        #     T_max=self.args.num_epochs_autoencoder,
+        #     eta_min=self.lr / 50,
+        # )
+        return optimizer
+        # [lr_scheduler])
 
     def encode(self, x):
         z = self.model.encoder(x)
