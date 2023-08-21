@@ -5,7 +5,8 @@ from pathlib import Path
 import pandas as pd
 import os
 import json
-import h5py
+
+# import h5py
 from glob import glob
 import numpy as np
 from sklearn.decomposition import PCA
@@ -304,6 +305,8 @@ class ShapeNetDataset(Dataset):
         all_data = []
         all_label = []
         for h5_name in path:
+            import h5py
+
             f = h5py.File(h5_name, "r+")
             data = f["data"][:].astype("float32")
             label = f["label"][:].astype("int64")

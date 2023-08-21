@@ -7,8 +7,9 @@ def get_model_name(model):
     encoder_type = model.encoder_type
     decoder_type = model.decoder_type
     num_features = model.encoder.num_features
+    k = model.k
     shape = model.shape
-    model_name = f"{encoder_type}_{decoder_type}_{num_features}_{shape}"
+    model_name = f"{encoder_type}_{decoder_type}_{num_features}_{shape}_{k}"
     return model_name
 
 
