@@ -333,7 +333,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--num_features",
-        default=512,
+        default=50,
         type=int,
         help="Please provide the number of " "features to extract.",
     )
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--encoder_type",
-        default="foldingnet",
+        default="pointnet",
         type=str,
         help="Please provide the type of encoder.",
     )
@@ -361,7 +361,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--batch_size",
-        default=16,
+        default=100,
         type=int,
         help="Please provide the batch size.",
     )

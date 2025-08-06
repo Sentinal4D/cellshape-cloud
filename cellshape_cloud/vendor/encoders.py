@@ -315,6 +315,7 @@ class PointNetfeat(nn.Module):
         self.num_features = 512
 
         self.mlp = nn.Linear(1024, 512)
+        self.linear = nn.Linear(512, 50)
 
     def forward(self, x):
         n_pts = x.size()[2]
@@ -335,11 +336,12 @@ class PointNetfeat(nn.Module):
             x = torch.cat([x, pointfeat], 1)
 
         x = self.mlp(x)
+        x = self.linear(x)
         return x
 
 
 if __name__ == "__main__":
-    model = PointNetfeat(128)
+    model = PointNetfeat()
     model.eval()
     inp = torch.rand((1, 2048, 3))
     out = model(inp)
